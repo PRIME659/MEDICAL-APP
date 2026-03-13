@@ -8,8 +8,8 @@ import { Stethoscope, Pill, Calendar, Home } from "lucide-react";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const navRef = useRef(null);
 
   // Scroll detection
@@ -19,14 +19,28 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Apply dark mode
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode") === "true";
+    setDarkMode(saved);
+  }, []);
+
+  // Dark mode toggle
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add("dark");
+      document.documentElement.classList.add("dark");
     } else {
-      document.body.classList.remove("dark");
+      document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  // Cursor reflection tracking
+  const handleMouseMove = (e) => {
+    if (!navRef.current) return;
+    const rect = navRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setCursorPos({ x, y });
+  };
 
   const navItems = [
     { href: "/doctors", icon: <Stethoscope size={18} /> },
@@ -40,30 +54,50 @@ export default function Navbar() {
       {/* Navbar */}
       <nav
         ref={navRef}
+        onMouseMove={handleMouseMove}
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
-        className={`flex items-center gap-6 fixed transition-all duration-300 ease-in-out
+        className={`flex items-center gap-6 fixed overflow-visible rounded-full transition-all duration-300 ease-in-out
           ${scrolled
-            ? "top-4 right-16 md:right-20 left-auto"
-            : "top-4 left-1/2 -translate-x-1/2"}
+            ? "top-6 right-16 md:right-20 left-auto"
+            : "top-6 left-1/2 -translate-x-1/2"}
         `}
       >
         <div
-          className={`flex items-center gap-6 px-6 py-3 rounded-full shadow-lg
-            backdrop-blur-md transition-all duration-300
+          className={`relative overflow-visible flex items-center gap-6 px-6 py-3 rounded-full
+            transition-all duration-300
             ${scrolled && !expanded
               ? "w-auto px-4 justify-center"
               : "w-[75vw] justify-between max-w-5xl"}
           `}
           style={{
-            background: "rgba(245, 247, 250, 0.65)",
-            backdropFilter: "blur(14px)",
-            WebkitBackdropFilter: "blur(14px)",
-            border: "1px solid rgba(180, 180, 180, 0.35)",
+            background: `linear-gradient(180deg, rgba(245,245,245,0.9) 0%, rgba(230,230,230,0.95) 100%)`,
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            border: "1px solid rgba(255,255,255,0.55)",
+            boxShadow: `
+              0 8px 10px rgba(0,0,0,0.12),
+              0 22px 30px rgba(0,0,0,0.16),
+              0 40px 70px rgba(0,0,0,0.18),
+              0 80px 140px rgba(0,0,0,0.14),
+              inset 0 1px 0 rgba(255,255,255,0.7)
+            `
           }}
         >
+          {/* Cursor reflection */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `radial-gradient(circle at ${cursorPos.x}px ${cursorPos.y}px,
+                rgba(255,255,255,0.65),
+                transparent 45%)`,
+              filter: "blur(32px)",
+              opacity: 0.75
+            }}
+          />
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 relative z-10">
             {scrolled && !expanded ? (
               <Home size={20} className="text-blue-700" />
             ) : (
@@ -73,7 +107,6 @@ export default function Navbar() {
                   alt="PrimeHealth Logo"
                   width={28}
                   height={28}
-                  className="object-contain"
                 />
                 <span className="font-bold text-blue-700">
                   PrimeHealth
@@ -82,18 +115,34 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* Nav Items */}
-          <div className="flex items-center gap-5">
+          {/* Nav icons */}
+          <div className="flex items-center gap-5 relative z-10">
             {navItems.map((item) => (
-              <MobileNavItem key={item.href} {...item} />
+              <Link
+                key={item.href}
+                href={item.href}
+                className="
+                  text-blue-700
+                  flex items-center justify-center
+                  transition-all duration-200
+                  hover:scale-110
+                  hover:text-emerald-500
+                "
+              >
+                {item.icon}
+              </Link>
             ))}
           </div>
         </div>
       </nav>
 
-      {/* Standalone Dark Mode Toggle */}
+      {/* Dark mode toggle */}
       <div
-        onClick={() => setDarkMode(!darkMode)}
+        onClick={() => {
+          const newMode = !darkMode;
+          setDarkMode(newMode);
+          localStorage.setItem("darkMode", String(newMode));
+        }}
         className="
           fixed
           top-6
@@ -104,6 +153,9 @@ export default function Navbar() {
           flex
           items-center
           justify-center
+          rounded-full
+          bg-[#2d2d2d]
+          hover:bg-[#333]
           transition-transform
           duration-300
           hover:scale-110
@@ -111,27 +163,9 @@ export default function Navbar() {
           z-50
         "
       >
-        <Image
-          src="/yin_yang_moon-removebg-preview.png"
-          alt="Toggle Dark Mode"
-          width={40}
-          height={40}
-          className="object-contain"
-        />
+        🌙
       </div>
 
     </div>
-  );
-}
-
-// MobileNavItem
-function MobileNavItem({ href, icon }) {
-  return (
-    <Link
-      href={href}
-      className="text-blue-700 flex items-center justify-center"
-    >
-      {icon}
-    </Link>
   );
 }

@@ -62,7 +62,7 @@ export default function DoctorsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <header>
+      <header className="doctors-header">
         <h1 className="text-3xl font-bold text-gray-900">
           Find a Doctor
         </h1>

@@ -41,7 +41,7 @@ export default function AppointmentsPage() {
 
       {/* Header */}
       <section>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2 appointments-header">
           Book an Appointment
         </h1>
         <p className="text-slate-600">
@@ -133,8 +133,8 @@ export default function AppointmentsPage() {
 
       {/* Back to Home Arrow */}
       <div className="flex justify-center mt-10">
-        <Link href="/" className="text-blue-700 text-3xl font-bold animate-bounce">
-          ⬆ Back to Home
+        <Link href="/" className="text-blue-700 text-base font-medium hover:underline">
+          Home
         </Link>
       </div>
     </div>

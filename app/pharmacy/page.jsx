@@ -43,12 +43,14 @@ export default function PharmacyPage() {
   });
 
   return (
+
+
     <div className="space-y-10">
       {/* Navbar-safe spacing */}
       <div className="h-16 md:h-20" />
 
       {/* Header */}
-      <section>
+      <section className="pharmacy-header">
         <h1 className="text-3xl font-bold text-slate-900 mb-2">Pharmacy</h1>
         <p className="text-slate-600 mb-6">
           Browse and purchase essential medications easily.
@@ -117,10 +119,10 @@ export default function PharmacyPage() {
           filteredDrugs.map((drug, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+              className="pharmacy-card bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between"
             >
               {/* Image placeholder */}
-              <div className="w-full h-32 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+              <div className="drug-image w-full h-32 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-blue-300 text-sm">Drug Image</span>
               </div>
 
@@ -137,7 +139,7 @@ export default function PharmacyPage() {
                 <span className="font-bold text-green-600">
                   {drug.price}
                 </span>
-                <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700">
+                <span className="stock-badge text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700">
                   In Stock
                 </span>
               </div>
