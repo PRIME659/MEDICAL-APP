@@ -46,6 +46,7 @@ export default function Navbar() {
     { href: "/doctors", icon: <Stethoscope size={18} /> },
     { href: "/pharmacy", icon: <Pill size={18} /> },
     { href: "/appointments", icon: <Calendar size={18} /> },
+
   ];
 
   return (
@@ -132,6 +133,14 @@ export default function Navbar() {
                 {item.icon}
               </Link>
             ))}
+
+            <Link
+              href="/auth"
+              className="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-1.5 rounded-full transition-all duration-200"
+            >
+              Login
+            </Link>
+            
           </div>
         </div>
       </nav>
@@ -144,24 +153,24 @@ export default function Navbar() {
           localStorage.setItem("darkMode", String(newMode));
         }}
         className="
-          fixed
-          top-6
-          right-4
-          cursor-pointer
-          w-10
-          h-10
-          flex
-          items-center
-          justify-center
-          rounded-full
-          bg-[#2d2d2d]
-          hover:bg-[#333]
-          transition-transform
-          duration-300
-          hover:scale-110
-          active:scale-95
-          z-50
-        "
+    fixed
+    bottom-6 right-4
+    md:top-6 md:bottom-auto
+    cursor-pointer
+    w-10
+    h-10
+    flex
+    items-center
+    justify-center
+    rounded-full
+    bg-[#2d2d2d]
+    hover:bg-[#333]
+    transition-transform
+    duration-300
+    hover:scale-110
+    active:scale-95
+    z-50
+  "
       >
         🌙
       </div>
