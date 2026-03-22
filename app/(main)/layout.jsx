@@ -34,20 +34,3 @@ export default function MainLayout({ children }) {
     </>
   );
 }
-// ```
-
-// ---
-
-// **Folder structure:**
-// ```
-// app/
-//   layout.jsx              ← root layout (bare shell)
-//   auth/
-//     page.jsx              ← auth page (uses root layout only)
-//   (main)/
-//     layout.jsx            ← main layout (Navbar, FAQ, Background)
-//     page.jsx              ← homepage
-//     doctors/
-//     pharmacy/
-//     appointments/
-//   components/
