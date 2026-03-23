@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    localStorage.setItem("authUser", "true");
+    router.push("/");
+  };
 
   return (
     <div className="h-screen relative overflow-hidden flex items-center justify-center">
@@ -26,7 +33,7 @@ export default function AuthPage() {
       <div className="absolute inset-0 bg-black/50 z-10" />
 
       {/* Doctor image - left side */}
-      <div className="hidden md:flex absolute left-0 bottom-0 z-20 items-end">
+      <div className="hidden lg:flex absolute left-0 bottom-0 z-20 items-end">
         <Image
           src="/doctor.png"
           alt="Doctor"
@@ -36,9 +43,9 @@ export default function AuthPage() {
         />
       </div>
 
-      {/* Form Card - outer container */}
+      {/* Form Card */}
       <div className="relative z-20 w-full max-w-md mx-auto md:mr-24 px-4">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 sm:p-8">
 
           {/* Logo */}
           <div className="mb-6 text-center">
@@ -148,14 +155,17 @@ export default function AuthPage() {
             {/* Forgot Password - Login only */}
             {isLogin && (
               <div className="text-right">
-                <a href="#" className="text-xs text-blue-400 hover:underline">
+                <a href="/forget-password" className="text-xs text-blue-400 hover:underline">
                   Forgot password?
                 </a>
               </div>
             )}
 
             {/* Submit Button */}
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors duration-200 text-sm mt-1">
+            <button
+              onClick={handleSubmit}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors duration-200 text-sm mt-1"
+            >
               {isLogin ? "Login" : "Create Account"}
             </button>
 

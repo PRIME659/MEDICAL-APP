@@ -20,150 +20,199 @@
 }
 
 .dark {
-  --background: #0a0a0a;
-  --white: #111827;
-  --text-dark: #ededed;
-  --text-light: #9ca3af;
-  --border-light: #1f2937;
+  --background: #0f172a;
+  --white: #1e293b;
+  --text-dark: #e2e8f0;
+  --text-light: #94a3b8;
+  --border-light: #1e293b;
 
   /* Background surfaces */
-  --bg-gradient: linear-gradient(180deg, #0f1117 0%, #141820 40%, #1a1f2e 100%);
-  --surface-1: #1c2030;
-  --surface-2: #1a1f2c;
-  --ambient: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+  --bg-gradient: linear-gradient(180deg, #0f172a 0%, #0f172a 40%, #0f172a 100%);
+  --surface-1: #1e293b;
+  --surface-2: #1e293b;
+  --ambient: radial-gradient(circle, rgba(30,41,59,0.9) 0%, transparent 70%);
 }
 
+/* ================================
+   DARK MODE — HOMEPAGE HERO
+   ================================ */
 .dark section.text-center {
-  background: linear-gradient(135deg, #1a2420 65%, #1f2e25 100%) !important;
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  box-shadow: 
-    0 0 12px rgba(212, 175, 55, 0.15),
-    0 0 30px rgba(212, 175, 55, 0.08),
-    inset 0 0 20px rgba(212, 175, 55, 0.04);
+  background: linear-gradient(135deg, #0f172a 65%, #1e293b 100%) !important;
+  border: 1px solid rgba(99, 130, 201, 0.3);
+  box-shadow:
+    0 0 12px rgba(99, 130, 201, 0.1),
+    0 0 30px rgba(99, 130, 201, 0.06),
+    inset 0 0 20px rgba(99, 130, 201, 0.03);
 }
 
 .dark section.text-center h1,
 .dark section.text-center p {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark section:not(.text-center) h2 {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark section:not(.text-center) p {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
 }
 
-/* Pharmacy Card */
+/* ================================
+   PHARMACY CARD
+   ================================ */
 .dark .pharmacy-card {
-  background: linear-gradient(135deg, #1a2420 65%, #1f2e25 100%) !important;
-  border: 1px solid rgba(212, 175, 55, 0.35) !important;
-  box-shadow: 
-    0 0 12px rgba(212, 175, 55, 0.15),
-    0 0 30px rgba(212, 175, 55, 0.08),
-    inset 0 0 20px rgba(212, 175, 55, 0.04);
+  background: #1e293b !important;
+  border: 1px solid rgba(99, 130, 201, 0.25) !important;
+  box-shadow:
+    0 0 12px rgba(99, 130, 201, 0.08),
+    0 0 30px rgba(99, 130, 201, 0.04),
+    inset 0 0 20px rgba(99, 130, 201, 0.02);
 }
 
-/* Card image placeholder */
 .dark .pharmacy-card .drug-image {
-  background-color: #1f2e25 !important;
+  background-color: #0f172a !important;
 }
 
-/* Card text */
 .dark .pharmacy-card h3 {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .pharmacy-card p {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
 }
 
-/* Buy button → lemon green */
 .dark .pharmacy-card button {
-  background-color: #84cc16 !important;
-  color: #1a2420 !important;
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
 }
 
 .dark .pharmacy-card button:hover {
-  background-color: #a3e635 !important;
+  background-color: #2563eb !important;
 }
 
-/* In Stock badge */
 .dark .pharmacy-card .stock-badge {
-  background-color: #1f2e25 !important;
-  color: #84cc16 !important;
+  background-color: #0f172a !important;
+  color: #60a5fa !important;
 }
 
 .dark .pharmacy-header h1 {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .pharmacy-header p {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
 }
 
-/* Doctor Card */
+/* ================================
+   DOCTOR CARD
+   ================================ */
 .dark .doctor-card {
-  background: linear-gradient(135deg, #1a2420 65%, #1f2e25 100%) !important;
-  border: 1px solid rgba(212, 175, 55, 0.35) !important;
-  box-shadow: 
-    0 0 12px rgba(212, 175, 55, 0.15),
-    0 0 30px rgba(212, 175, 55, 0.08),
-    inset 0 0 20px rgba(212, 175, 55, 0.04);
+  background: #1e293b !important;
+  border: 1px solid rgba(99, 130, 201, 0.25) !important;
+  box-shadow:
+    0 0 12px rgba(99, 130, 201, 0.08),
+    0 0 30px rgba(99, 130, 201, 0.04),
+    inset 0 0 20px rgba(99, 130, 201, 0.02);
 }
 
-/* Image placeholder */
 .dark .doctor-card .doctor-image {
-  background-color: #1f2e25 !important;
+  background-color: #0f172a !important;
 }
 
-/* Text */
 .dark .doctor-card h3 {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .doctor-card p {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
 }
 
-/* Book button - available */
 .dark .doctor-card .book-btn-available {
-  background-color: #84cc16 !important;
-  color: #1a2420 !important;
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
 }
 
 .dark .doctor-card .book-btn-available:hover {
-  background-color: #a3e635 !important;
+  background-color: #2563eb !important;
 }
 
-/* Book button - unavailable */
 .dark .doctor-card .book-btn-disabled {
-  background-color: #2d2d2d !important;
-  color: #6b7280 !important;
+  background-color: #1e293b !important;
+  color: #475569 !important;
 }
 
-/* Availability badge */
 .dark .doctor-card .badge-available {
-  background-color: #1f2e25 !important;
-  color: #84cc16 !important;
+  background-color: #0f172a !important;
+  color: #60a5fa !important;
 }
 
 .dark .doctor-card .badge-busy {
-  background-color: #2d1f1f !important;
+  background-color: #1f1f2e !important;
   color: #f87171 !important;
 }
 
 .dark .doctors-header h1 {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .doctors-header p {
-  color: #9ca3af !important;
+  color: #94a3b8 !important;
 }
 
+/* ================================
+   APPOINTMENTS
+   ================================ */
 .dark .appointments-header {
-  color: #e5e7eb !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .appointments-form {
+  background-color: #1e293b !important;
+}
+
+/* ================================
+   FAQ PANEL
+   ================================ */
+.dark .faq-panel {
+  background-color: #0f172a !important;
+  border-right: 1px solid rgba(99, 130, 201, 0.2);
+}
+
+.dark .faq-panel h2 {
+  color: #e2e8f0 !important;
+}
+
+.dark .faq-item {
+  background-color: #1e293b !important;
+  border: 1px solid rgba(99, 130, 201, 0.2) !important;
+}
+
+.dark .faq-item p {
+  color: #e2e8f0 !important;
+}
+
+.dark .faq-item .faq-answer {
+  color: #94a3b8 !important;
+}
+
+/* ================================
+   SKELETON CARD
+   ================================ */
+.dark .skeleton-card {
+  background-color: #1e293b !important;
+}
+
+.dark .skeleton-card .skeleton-item {
+  background-color: #0f172a !important;
+}
+
+/* ================================
+   FOOTER
+   ================================ */
+.dark footer {
+  background-color: #0f172a !important;
+  border-top: 1px solid #1e293b !important;
 }
 
 /* ================================

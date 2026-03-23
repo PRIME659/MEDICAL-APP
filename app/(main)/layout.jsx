@@ -3,7 +3,9 @@
 import Navbar from "../components/Navbar";
 import MedicalBackground from "../components/MedicalBackground";
 import FAQPanel from "../components/FAQPanel";
+import Footer from "../components/Footer";
 import { useState } from "react";
+import { Toaster } from "react-hot-toast";
 
 export default function MainLayout({ children }) {
   const [faqOpen, setFaqOpen] = useState(false);
@@ -14,6 +16,31 @@ export default function MainLayout({ children }) {
         <MedicalBackground />
       </div>
       <Navbar />
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "10px",
+            fontSize: "14px",
+          },
+          success: {
+            style: {
+              background: "#f0fdf4",
+              color: "#166534",
+              border: "1px solid #bbf7d0",
+            },
+          },
+          error: {
+            style: {
+              background: "#fef2f2",
+              color: "#991b1b",
+              border: "1px solid #fecaca",
+            },
+          },
+        }}
+      />
 
       <FAQPanel open={faqOpen} onClose={() => setFaqOpen(false)} />
 
@@ -28,9 +55,10 @@ export default function MainLayout({ children }) {
         </div>
       )}
 
-      <main className="relative z-10 pt-32 px-6 max-w-7xl mx-auto">
+      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto">
         {children}
       </main>
+      <Footer />
     </>
   );
 }
