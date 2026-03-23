@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import MedicalBackground from "../components/MedicalBackground";
 import FAQPanel from "../components/FAQPanel";
 import Footer from "../components/Footer";
+import PageTransition from "../components/PageTransition";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -56,7 +57,9 @@ export default function MainLayout({ children }) {
       )}
 
       <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto">
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
       </main>
       <Footer />
     </>

@@ -139,29 +139,57 @@ export default function DashboardPage() {
         )}
 
         {/* Appointments Tab */}
+        {/* Appointments Tab */}
         {activeTab === "appointments" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Appointment History</h2>
-            <div className="space-y-3">
-              {mockAppointments.map((appt) => (
-                <div key={appt.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{appt.doctor}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{appt.specialty}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date}</p>
+
+            {mockAppointments.length > 0 ? (
+              <div className="space-y-3">
+                {mockAppointments.map((appt) => (
+                  <div key={appt.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{appt.doctor}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{appt.specialty}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date}</p>
+                    </div>
+                    <span className={`text-xs px-3 py-1 rounded-full font-medium ${appt.status === "Upcoming"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                      : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"}`}>
+                      {appt.status}
+                    </span>
                   </div>
-                  <span className={`text-xs px-3 py-1 rounded-full font-medium ${appt.status === "Upcoming" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"}`}>
-                    {appt.status}
-                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="w-20 h-20 rounded-full bg-blue-50 dark:bg-[#0f172a] flex items-center justify-center mb-4">
+                  <Calendar size={36} className="text-blue-300 dark:text-blue-500" />
                 </div>
-              ))}
-            </div>
-            <button
-              onClick={() => router.push("/appointments")}
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
-            >
-              Book New Appointment
-            </button>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+                  No Appointments Yet
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6">
+                  You haven't booked any appointments yet. Find a doctor and schedule your first visit.
+                </p>
+                <button
+                  onClick={() => router.push("/doctors")}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition"
+                >
+                  <Stethoscope size={16} />
+                  Find a Doctor
+                </button>
+              </div>
+            )}
+
+            {mockAppointments.length > 0 && (
+              <button
+                onClick={() => router.push("/appointments")}
+                className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
+              >
+                Book New Appointment
+              </button>
+            )}
           </div>
         )}
 

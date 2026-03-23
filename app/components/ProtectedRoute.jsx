@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const auth = localStorage.getItem("authUser");
     if (!auth) {
-      router.replace("/auth");
+      router.replace("/landing");
     } else {
       setAuthorized(true);
     }
