@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import PageTransition from "../components/PageTransition";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import BackToTop from "../components/BackToTop";
 
 export default function MainLayout({ children }) {
   const [faqOpen, setFaqOpen] = useState(false);
@@ -55,6 +56,8 @@ export default function MainLayout({ children }) {
           </button>
         </div>
       )}
+
+      <BackToTop/>
 
       <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto">
         <PageTransition>

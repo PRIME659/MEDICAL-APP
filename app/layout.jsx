@@ -8,8 +8,36 @@ const playpen = Playpen_Sans({
 });
 
 export const metadata = {
-  title: "PrimeHealth",
-  description: "Modern Healthcare Platform",
+  title: "PrimeHealth — Modern Healthcare Platform",
+  description: "Find verified doctors, book appointments, and access pharmacy services easily with PrimeHealth.",
+  keywords: ["healthcare", "doctors", "appointments", "pharmacy", "medical", "Nigeria"],
+  authors: [{ name: "PrimeHealth" }],
+  openGraph: {
+    title: "PrimeHealth — Modern Healthcare Platform",
+    description: "Find verified doctors, book appointments, and access pharmacy services easily with PrimeHealth.",
+    url: "https://medical-app-teal-sigma.vercel.app/",
+    siteName: "PrimeHealth",
+    images: [
+      {
+        url: "/PRIMEHEALTH2.png",
+        width: 800,
+        height: 600,
+        alt: "PrimeHealth Logo",
+      },
+    ],
+    locale: "en_NG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PrimeHealth — Modern Healthcare Platform",
+    description: "Find verified doctors, book appointments, and access pharmacy services easily.",
+    images: ["/PRIMEHEALTH2.png"],
+  },
+  icons: {
+    icon: "/PRIMEHEALTH2.png",
+    apple: "/PRIMEHEALTH2.png",
+  },
 };
 
 export default function RootLayout({ children }) {
