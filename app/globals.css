@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 /* ================================
+   LIGHT MODE HEADING FIX
+   ================================ */
+h1, h2, h3 {
+  color: #0f172a;
+}
+
+.dark h1, .dark h2, .dark h3 {
+  color: #e2e8f0;
+}
+
+/* ================================
    MEDICAL THEME VARIABLES
    ================================ */
 :root {

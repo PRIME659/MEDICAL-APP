@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Stethoscope, Pill, Calendar, Shield, Clock, Star, ChevronDown, ArrowRight, Activity, Heart, Users } from "lucide-react";
 
-// ── Floating particle background ──────────────────────────────
 function Particles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -27,7 +26,6 @@ function Particles() {
   );
 }
 
-// ── Glassmorphism card ─────────────────────────────────────────
 function GlassCard({ children, className = "" }) {
   return (
     <div
@@ -44,7 +42,6 @@ function GlassCard({ children, className = "" }) {
   );
 }
 
-// ── Neumorphic card ────────────────────────────────────────────
 function NeuCard({ children, className = "" }) {
   return (
     <div
@@ -59,7 +56,6 @@ function NeuCard({ children, className = "" }) {
   );
 }
 
-// ── Section reveal hook ────────────────────────────────────────
 function useReveal() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -87,6 +83,7 @@ export default function LandingPage() {
       desc: "Browse verified specialists across all medical fields. Filter by specialty, availability, and location.",
       color: "#3b82f6",
       bg: "rgba(59,130,246,0.1)",
+      href: "/auth",
     },
     {
       icon: <Pill size={28} />,
@@ -94,6 +91,7 @@ export default function LandingPage() {
       desc: "Access a wide catalog of medications. Search, compare, and order essential drugs with ease.",
       color: "#10b981",
       bg: "rgba(16,185,129,0.1)",
+      href: "/auth",
     },
     {
       icon: <Calendar size={28} />,
@@ -101,6 +99,7 @@ export default function LandingPage() {
       desc: "Schedule in-person or virtual consultations in seconds. Get instant confirmation and reminders.",
       color: "#6366f1",
       bg: "rgba(99,102,241,0.1)",
+      href: "/auth",
     },
     {
       icon: <Shield size={28} />,
@@ -108,6 +107,7 @@ export default function LandingPage() {
       desc: "Your medical history stored safely and accessible only to you and your care providers.",
       color: "#f59e0b",
       bg: "rgba(245,158,11,0.1)",
+      href: "/auth",
     },
     {
       icon: <Clock size={28} />,
@@ -115,6 +115,7 @@ export default function LandingPage() {
       desc: "Round-the-clock emergency support and telemedicine consultations whenever you need them.",
       color: "#ef4444",
       bg: "rgba(239,68,68,0.1)",
+      href: "/auth",
     },
     {
       icon: <Activity size={28} />,
@@ -122,6 +123,7 @@ export default function LandingPage() {
       desc: "Track your vitals, appointments, and prescriptions all in one unified dashboard.",
       color: "#8b5cf6",
       bg: "rgba(139,92,246,0.1)",
+      href: "/auth",
     },
   ];
 
@@ -156,28 +158,20 @@ export default function LandingPage() {
       {/* ── HERO ──────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0d2818 100%)",
-        }}
+        style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0d2818 100%)" }}
       >
         <Particles />
-
-        {/* Liquid glass orbs */}
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ background: "radial-gradient(circle, #3b82f6, transparent)" }} />
         <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #10b981, transparent)" }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10 blur-3xl" style={{ background: "radial-gradient(circle, #6366f1, transparent)" }} />
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          {/* Badge */}
           <GlassCard className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm text-emerald-300 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             Modern Healthcare Platform
           </GlassCard>
 
-          <h1
-            className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
-            style={{ textShadow: "0 0 80px rgba(59,130,246,0.3)" }}
-          >
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight" style={{ textShadow: "0 0 80px rgba(59,130,246,0.3)" }}>
             Your Health,{" "}
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Reimagined
@@ -205,7 +199,6 @@ export default function LandingPage() {
             </button>
           </div>
 
-          {/* Floating stats preview */}
           <div className="flex flex-wrap justify-center gap-4">
             {stats.map((s, i) => (
               <GlassCard key={i} className="flex items-center gap-3 px-5 py-3">
@@ -219,7 +212,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <ChevronDown size={24} className="text-white/40" />
         </div>
@@ -250,9 +242,13 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{s.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
-                <div className="flex items-center gap-1 mt-4 font-semibold text-sm transition-colors" style={{ color: s.color }}>
+                <button
+                  onClick={() => router.push(s.href)}
+                  className="flex items-center gap-1 mt-4 font-semibold text-sm transition-colors hover:underline"
+                  style={{ color: s.color }}
+                >
                   Learn more <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
+                </button>
               </NeuCard>
             ))}
           </div>
@@ -447,7 +443,6 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* ── GLOBAL STYLES ─────────────────────────────────── */}
       <style jsx global>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) scale(1); opacity: 0.2; }
