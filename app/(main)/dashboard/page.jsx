@@ -13,6 +13,8 @@ const mockAppointments = [
   { id: 4, doctor: "Dr. Johnson", specialty: "Pediatrician", date: "2026-04-22", status: "Upcoming" },
 ];
 
+const neonStyle = { color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" };
+
 export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
@@ -85,7 +87,7 @@ export default function DashboardPage() {
                 {profile.name.charAt(0)}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{profile.name}</h2>
+                <h2 className="text-lg font-bold" style={neonStyle}>{profile.name}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{profile.email}</p>
               </div>
             </div>
@@ -139,25 +141,43 @@ export default function DashboardPage() {
         )}
 
         {/* Appointments Tab */}
-        {/* Appointments Tab */}
         {activeTab === "appointments" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Appointment History</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Appointment History</h2>
 
             {mockAppointments.length > 0 ? (
               <div className="space-y-3">
                 {mockAppointments.map((appt) => (
-                  <div key={appt.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{appt.doctor}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{appt.specialty}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date}</p>
+                  <div key={appt.id} className="p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{appt.doctor}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{appt.specialty}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date}</p>
+                      </div>
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${appt.status === "Upcoming"
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"}`}>
+                        {appt.status}
+                      </span>
                     </div>
-                    <span className={`text-xs px-3 py-1 rounded-full font-medium ${appt.status === "Upcoming"
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                      : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"}`}>
-                      {appt.status}
-                    </span>
+
+                    {appt.status === "Upcoming" && (
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={() => toast.success(`Appointment with ${appt.doctor} rescheduled. We will contact you shortly.`, { duration: 4000 })}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                        >
+                          Reschedule
+                        </button>
+                        <button
+                          onClick={() => toast.error(`Appointment with ${appt.doctor} on ${appt.date} has been cancelled.`, { duration: 4000 })}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-red-400 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -166,9 +186,7 @@ export default function DashboardPage() {
                 <div className="w-20 h-20 rounded-full bg-blue-50 dark:bg-[#0f172a] flex items-center justify-center mb-4">
                   <Calendar size={36} className="text-blue-300 dark:text-blue-500" />
                 </div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
-                  No Appointments Yet
-                </h3>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">No Appointments Yet</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-6">
                   You haven't booked any appointments yet. Find a doctor and schedule your first visit.
                 </p>
@@ -196,7 +214,7 @@ export default function DashboardPage() {
         {/* Quick Links Tab */}
         {activeTab === "quicklinks" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Quick Links</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Quick Links</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: "Find a Doctor", desc: "Browse and filter doctors by specialty", icon: <Stethoscope size={20} className="text-blue-600" />, href: "/doctors" },
@@ -225,7 +243,7 @@ export default function DashboardPage() {
         {/* Settings Tab */}
         {activeTab === "settings" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 space-y-4">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Account Settings</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Account Settings</h2>
 
             {[
               { label: "Email Notifications", desc: "Receive appointment reminders via email" },

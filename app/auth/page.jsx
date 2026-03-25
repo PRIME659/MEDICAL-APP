@@ -87,7 +87,7 @@ export default function AuthPage() {
 
           {/* Logo */}
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-white">PrimeHealth</h2>
+            <h2 className="text-3xl font-bold" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3), 0 0 50px rgba(59,130,246,0.15)" }}>PrimeHealth</h2>
             <p className="text-gray-300 text-sm mt-2">
               {isLogin ? "Welcome back" : "Create your account"}
             </p>
