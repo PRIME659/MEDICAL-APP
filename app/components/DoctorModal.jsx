@@ -79,8 +79,8 @@ export default function DoctorModal({ doctor, onClose }) {
 
           {/* Name & Specialty */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{doctor.name}</h2>
-            <p className="text-blue-600 text-sm font-medium mt-0.5">{doctor.specialty}</p>
+            <h2 className="text-xl font-bold" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" }}>{doctor.name}</h2>
+            <p className="text-sm font-medium mt-0.5" style={{ color: "#00cfff" }}>{doctor.specialty}</p>
           </div>
 
           {/* Info grid */}
@@ -110,7 +110,7 @@ export default function DoctorModal({ doctor, onClose }) {
 
           {/* Bio */}
           <div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">About</h3>
+            <h3 className="text-sm font-bold mb-2" style={{ color: "#00cfff" }}>About</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
               {doctor.name} is a highly experienced {doctor.specialty} specialist with a proven track record of delivering quality patient care. They are dedicated to providing compassionate, evidence-based treatment tailored to each patient's unique needs.
             </p>
@@ -138,7 +138,7 @@ export default function DoctorModal({ doctor, onClose }) {
 
           {/* Time Slots */}
           <div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold mb-3 flex items-center gap-2" style={{ color: "#00cfff" }}>
               <Clock size={15} /> Available Time Slots
             </h3>
             <div className="grid grid-cols-3 gap-2">

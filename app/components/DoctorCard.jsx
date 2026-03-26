@@ -1,5 +1,8 @@
 import Image from "next/image";
 
+const neonGreen = { color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" };
+const neonBlue = { color: "#00cfff", textShadow: "0 0 10px rgba(0,207,255,0.4)" };
+
 export default function DoctorCard({ name, specialty, hospital, rating, available, avatar, onClick }) {
   return (
     <div className="doctor-card bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 hover:shadow-md transition flex flex-col cursor-pointer" onClick={onClick}>
@@ -14,9 +17,14 @@ export default function DoctorCard({ name, specialty, hospital, rating, availabl
         )}
       </div>
 
-      <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white">{name}</h3>
-      <p className="text-sm text-blue-600">{specialty}</p>
-      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{hospital}</p>
+      {/* Name in neon green */}
+      <h3 className="font-semibold text-base sm:text-lg mb-1" style={neonGreen}>{name}</h3>
+
+      {/* Specialty in neon blue */}
+      <p className="text-sm font-medium" style={neonBlue}>{specialty}</p>
+
+      {/* Hospital */}
+      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">{hospital}</p>
 
       <div className="flex items-center justify-between mt-3">
         <span className="text-sm text-yellow-500 font-medium">⭐ {rating}</span>

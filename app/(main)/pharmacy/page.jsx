@@ -100,8 +100,12 @@ export default function PharmacyPage() {
                 <div className="w-full h-32 bg-blue-50 dark:bg-[#0f172a] rounded-lg flex items-center justify-center mb-4">
                   <span className="text-4xl">💊</span>
                 </div>
-                <h3 className="font-semibold text-base text-slate-900 dark:text-white">{drug.name}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{drug.category}</p>
+                <h3 className="font-semibold text-base mt-1" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" }}>
+                  {drug.name}
+                </h3>
+                <p className="text-sm font-medium mt-1" style={{ color: "#00cfff" }}>
+                  {drug.category}
+                </p>
                 <div className="flex items-center justify-between mt-4">
                   <span className="font-bold text-green-600">{drug.price}</span>
                   <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700">
