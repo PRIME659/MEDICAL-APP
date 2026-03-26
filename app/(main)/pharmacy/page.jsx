@@ -13,6 +13,10 @@ export default function PharmacyPage() {
   const [loading, setLoading] = useState(false);
   const [selectedDrug, setSelectedDrug] = useState(null);
 
+  const handleAddToCart = (drug) => {
+    window.dispatchEvent(new CustomEvent("addToCart", { detail: drug }));
+  };
+
   useEffect(() => {
     setLoading(true);
     fetch("https://api.fda.gov/drug/label.json?limit=20")
@@ -129,6 +133,7 @@ export default function PharmacyPage() {
           <PharmacyModal
             drug={selectedDrug}
             onClose={() => setSelectedDrug(null)}
+            onAddToCart={handleAddToCart}
           />
         )}
 

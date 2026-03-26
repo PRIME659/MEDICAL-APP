@@ -163,19 +163,34 @@ export default function DashboardPage() {
                     </div>
 
                     {appt.status === "Upcoming" && (
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => toast.success(`Appointment with ${appt.doctor} rescheduled. We will contact you shortly.`, { duration: 4000 })}
-                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-                        >
-                          Reschedule
-                        </button>
-                        <button
-                          onClick={() => toast.error(`Appointment with ${appt.doctor} on ${appt.date} has been cancelled.`, { duration: 4000 })}
-                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-red-400 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-                        >
-                          Cancel
-                        </button>
+                      <div className="space-y-2 mt-2">
+                        <input
+                          type="date"
+                          min={new Date().toISOString().split("T")[0]}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              toast.success(`Appointment with ${appt.doctor} rescheduled to ${e.target.value}. Subject to doctor availability — we will confirm shortly.`, { duration: 5000 });
+                            }
+                          }}
+                          className="w-full border border-blue-400 dark:border-blue-500 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => toast.success(`Reschedule request sent for ${appt.doctor}. We will contact you shortly.`, { duration: 4000 })}
+                            className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                          >
+                            Confirm Reschedule
+                          </button>
+                          <button
+                            onClick={() => toast.error(`Appointment with ${appt.doctor} on ${appt.date} has been cancelled.`, { duration: 4000 })}
+                            className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-red-400 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+                          Subject to doctor availability — we will confirm shortly.
+                        </p>
                       </div>
                     )}
                   </div>

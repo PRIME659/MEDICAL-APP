@@ -16,6 +16,15 @@ export default function DoctorModal({ doctor, onClose }) {
   const router = useRouter();
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent("modalOpen", { detail: { open: true } }));
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.dispatchEvent(new CustomEvent("modalOpen", { detail: { open: false } }));
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         onClose();

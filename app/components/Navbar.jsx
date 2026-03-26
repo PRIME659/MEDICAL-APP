@@ -45,6 +45,20 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleModalOpen = (e) => {
+      setModalOpen(e.detail.open);
+      if (e.detail.open) {
+        setExpanded(false);
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("modalOpen", handleModalOpen);
+    return () => window.removeEventListener("modalOpen", handleModalOpen);
+  }, []);
+
   const handleMouseMove = (e) => {
     if (!navRef.current) return;
     const rect = navRef.current.getBoundingClientRect();
@@ -74,7 +88,7 @@ export default function Navbar() {
       >
         <div
           className={`relative overflow-visible flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300
-            ${scrolled && !expanded
+            ${modalOpen ? "w-auto justify-center" : scrolled && !expanded
               ? "w-auto justify-center"
               : "w-[90vw] sm:w-[75vw] justify-between max-w-5xl"}
           `}
