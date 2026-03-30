@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Stethoscope, Pill, Calendar, Shield, Clock, Star, ChevronDown, ArrowRight, Activity, Heart, Users } from "lucide-react";
+import LanguageToggle from "../components/LanguageToggle";
 
 function Particles() {
   return (
@@ -77,54 +78,12 @@ export default function LandingPage() {
   const [faqRef, faqVisible] = useReveal();
 
   const services = [
-    {
-      icon: <Stethoscope size={28} />,
-      title: "Find a Doctor",
-      desc: "Browse verified specialists across all medical fields. Filter by specialty, availability, and location.",
-      color: "#3b82f6",
-      bg: "rgba(59,130,246,0.1)",
-      href: "/auth",
-    },
-    {
-      icon: <Pill size={28} />,
-      title: "Browse Pharmacy",
-      desc: "Access a wide catalog of medications. Search, compare, and order essential drugs with ease.",
-      color: "#10b981",
-      bg: "rgba(16,185,129,0.1)",
-      href: "/auth",
-    },
-    {
-      icon: <Calendar size={28} />,
-      title: "Book Appointments",
-      desc: "Schedule in-person or virtual consultations in seconds. Get instant confirmation and reminders.",
-      color: "#6366f1",
-      bg: "rgba(99,102,241,0.1)",
-      href: "/auth",
-    },
-    {
-      icon: <Shield size={28} />,
-      title: "Secure Health Records",
-      desc: "Your medical history stored safely and accessible only to you and your care providers.",
-      color: "#f59e0b",
-      bg: "rgba(245,158,11,0.1)",
-      href: "/auth",
-    },
-    {
-      icon: <Clock size={28} />,
-      title: "24/7 Emergency Care",
-      desc: "Round-the-clock emergency support and telemedicine consultations whenever you need them.",
-      color: "#ef4444",
-      bg: "rgba(239,68,68,0.1)",
-      href: "/auth",
-    },
-    {
-      icon: <Activity size={28} />,
-      title: "Health Monitoring",
-      desc: "Track your vitals, appointments, and prescriptions all in one unified dashboard.",
-      color: "#8b5cf6",
-      bg: "rgba(139,92,246,0.1)",
-      href: "/auth",
-    },
+    { icon: <Stethoscope size={28} />, title: "Find a Doctor", desc: "Browse verified specialists across all medical fields. Filter by specialty, availability, and location.", color: "#3b82f6", bg: "rgba(59,130,246,0.1)", href: "/auth" },
+    { icon: <Pill size={28} />, title: "Browse Pharmacy", desc: "Access a wide catalog of medications. Search, compare, and order essential drugs with ease.", color: "#10b981", bg: "rgba(16,185,129,0.1)", href: "/auth" },
+    { icon: <Calendar size={28} />, title: "Book Appointments", desc: "Schedule in-person or virtual consultations in seconds. Get instant confirmation and reminders.", color: "#6366f1", bg: "rgba(99,102,241,0.1)", href: "/auth" },
+    { icon: <Shield size={28} />, title: "Secure Health Records", desc: "Your medical history stored safely and accessible only to you and your care providers.", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", href: "/auth" },
+    { icon: <Clock size={28} />, title: "24/7 Emergency Care", desc: "Round-the-clock emergency support and telemedicine consultations whenever you need them.", color: "#ef4444", bg: "rgba(239,68,68,0.1)", href: "/auth" },
+    { icon: <Activity size={28} />, title: "Health Monitoring", desc: "Track your vitals, appointments, and prescriptions all in one unified dashboard.", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)", href: "/auth" },
   ];
 
   const steps = [
@@ -155,6 +114,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ fontFamily: "'Playpen Sans', cursive" }}>
 
+      {/* Language Toggle */}
+      <div className="fixed top-6 right-6 z-[9999]">
+        <LanguageToggle inline={false} />
+      </div>
+
       {/* ── HERO ──────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"
@@ -171,7 +135,10 @@ export default function LandingPage() {
             Modern Healthcare Platform
           </GlassCard>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight" style={{ textShadow: "0 0 80px rgba(59,130,246,0.3)" }}>
+          <h1
+            className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            style={{ textShadow: "0 0 80px rgba(59,130,246,0.3)", color: "#6366f1" }}
+          >
             Your Health,{" "}
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Reimagined
@@ -269,7 +236,12 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto relative z-10">
           <div className={`text-center mb-16 transition-all duration-700 ${stepsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Simple Process</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-2 mb-4">How PrimeHealth Works</h2>
+            <h2
+              className="text-3xl sm:text-4xl font-bold mt-2 mb-4"
+              style={{ color: "#6366f1" }}
+            >
+              How PrimeHealth Works
+            </h2>
             <p className="text-slate-400 max-w-xl mx-auto">Getting the care you need has never been simpler.</p>
           </div>
 
@@ -324,7 +296,12 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto relative z-10">
           <div className={`text-center mb-16 transition-all duration-700 ${testimonialsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Patient Stories</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-2 mb-4">What Our Patients Say</h2>
+            <h2
+              className="text-3xl sm:text-4xl font-bold mt-2 mb-4"
+              style={{ color: "#6366f1" }}
+            >
+              What Our Patients Say
+            </h2>
             <p className="text-slate-400 max-w-xl mx-auto">Real experiences from real people who trust PrimeHealth.</p>
           </div>
 
@@ -389,10 +366,7 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-8">
-            <button
-              onClick={() => router.push("/auth")}
-              className="text-blue-600 font-semibold text-sm hover:underline"
-            >
+            <button onClick={() => router.push("/auth")} className="text-blue-600 font-semibold text-sm hover:underline">
               See all FAQs →
             </button>
           </div>
@@ -410,7 +384,10 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+          <h2
+            className="text-3xl sm:text-5xl font-bold mb-6 leading-tight"
+            style={{ color: "#6366f1" }}
+          >
             Ready to Take Control of{" "}
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Your Health?

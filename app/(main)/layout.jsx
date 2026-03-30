@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import MedicalBackground from "../components/MedicalBackground";
 import FAQPanel from "../components/FAQPanel";
@@ -8,15 +7,34 @@ import Footer from "../components/Footer";
 import PageTransition from "../components/PageTransition";
 import CartPanel from "../components/CartPanel";
 import BackToTop from "../components/BackToTop";
+import ChatBot from "../components/ChatBot";
+import Onboarding from "../components/Onboarding";
+import { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { ShoppingCart } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function MainLayout({ children }) {
   const [faqOpen, setFaqOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const pathname = usePathname();
 
-    useEffect(() => {
+  const isPharmacy = pathname === "/pharmacy";
+  const isDoctors = pathname === "/doctors";
+  const isDashboard = pathname === "/dashboard";
+
+  const showFAQ = !isPharmacy && !isDoctors || isDashboard;
+  const showCart = isPharmacy;
+
+  useEffect(() => {
+    const isOnboarded = localStorage.getItem("onboarded");
+    const isAuth = localStorage.getItem("authUser");
+    if (isAuth && !isOnboarded) setShowOnboarding(true);
+  }, []);
+
+  useEffect(() => {
     const handleAddToCart = (e) => addToCart(e.detail);
     window.addEventListener("addToCart", handleAddToCart);
     return () => window.removeEventListener("addToCart", handleAddToCart);
@@ -37,17 +55,14 @@ export default function MainLayout({ children }) {
   };
 
   const decreaseQty = (name) => {
-    setCartItems((prev) => prev.map((i) => i.name === name
-      ? i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i
-      : i
+    setCartItems((prev) => prev.map((i) =>
+      i.name === name ? i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i : i
     ).filter((i) => i.quantity > 0));
   };
 
   const removeFromCart = (name) => {
     setCartItems((prev) => prev.filter((i) => i.name !== name));
   };
-
-
 
   return (
     <>
@@ -66,6 +81,8 @@ export default function MainLayout({ children }) {
         }}
       />
 
+      {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
+
       <FAQPanel open={faqOpen} onClose={() => setFaqOpen(false)} />
       <CartPanel
         open={cartOpen}
@@ -77,8 +94,8 @@ export default function MainLayout({ children }) {
       />
 
       {/* FAQ Button */}
-      {!faqOpen && !cartOpen && (
-        <div className="fixed bottom-6 left-6 z-[9999]">
+      {showFAQ && !faqOpen && (
+        <div className="fixed bottom-6 left-6 z-[9998]">
           <button
             onClick={() => setFaqOpen(true)}
             className="bg-white border-2 border-green-600 text-black font-bold text-sm w-12 h-12 rounded-md shadow-md hover:bg-green-50 transition"
@@ -89,21 +106,24 @@ export default function MainLayout({ children }) {
       )}
 
       {/* Cart Button */}
-      <div className="fixed bottom-6 left-24 z-[9999]">
-        <button
-          onClick={() => setCartOpen(true)}
-          className="bg-white border-2 border-blue-600 text-blue-600 font-bold text-sm w-12 h-12 rounded-md shadow-md hover:bg-blue-50 transition flex items-center justify-center relative"
-        >
-          <ShoppingCart size={20} />
-          {cartItems.length > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-              {cartItems.length}
-            </span>
-          )}
-        </button>
-      </div>
+      {showCart && (
+        <div className="fixed bottom-6 left-6 z-[9998]">
+          <button
+            onClick={() => setCartOpen(true)}
+            className="bg-white border-2 border-blue-600 text-blue-600 font-bold text-sm w-12 h-12 rounded-md shadow-md hover:bg-blue-50 transition flex items-center justify-center relative"
+          >
+            <ShoppingCart size={20} />
+            {cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
       <BackToTop />
+      <ChatBot />
 
       <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto">
         <PageTransition>

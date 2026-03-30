@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { User, Calendar, Settings, Stethoscope, Pill, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
+import LanguageToggle from "@/app/components/LanguageToggle";
 
 const mockAppointments = [
   { id: 1, doctor: "Dr. Adebayo", specialty: "Cardiologist", date: "2026-04-10", status: "Upcoming" },
@@ -276,6 +277,14 @@ export default function DashboardPage() {
                 </label>
               </div>
             ))}
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Language</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+              </div>
+              <LanguageToggle inline={true} />
+            </div>
 
             <button
               onClick={handleLogout}

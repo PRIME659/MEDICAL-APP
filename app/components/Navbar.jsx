@@ -184,7 +184,7 @@ export default function Navbar() {
           setDarkMode(newMode);
           localStorage.setItem("darkMode", String(newMode));
         }}
-        className="fixed bottom-6 right-4 md:top-6 md:bottom-auto cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#2d2d2d] hover:bg-[#333] transition-transform duration-300 hover:scale-110 active:scale-95 z-50"
+        className="fixed bottom-6 right-4 md:top-6 md:bottom-auto md:right-16 cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#2d2d2d] hover:bg-[#333] transition-transform duration-300 hover:scale-110 active:scale-95 z-50"
       >
         🌙
       </div>

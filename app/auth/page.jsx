@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import LanguageToggle from "../components/LanguageToggle";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -68,6 +69,10 @@ export default function AuthPage() {
 
   return (
     <div className="h-screen relative overflow-hidden flex items-center justify-center">
+
+      <div className="absolute top-6 right-6 z-30">
+        <LanguageToggle inline={false} />
+      </div>
 
       <video
         autoPlay

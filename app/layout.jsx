@@ -1,3 +1,4 @@
+import { LanguageProvider } from "./components/LanguageContext";
 import "./globals.css";
 import { Playpen_Sans } from "next/font/google";
 
@@ -44,7 +45,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={playpen.variable}>
       <body className="min-h-screen transition-colors duration-300 overflow-x-hidden">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
+        
       </body>
     </html>
   );
