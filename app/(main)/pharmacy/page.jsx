@@ -5,51 +5,66 @@ import { useState, useEffect } from "react";
 import SkeletonCard from "../../components/SkeletonCard";
 import PharmacyModal from "../../components/PharmacyModal";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import { pharmacyAPI, cartAPI } from "../../lib/api";
+import { toast } from "react-hot-toast";
 
 export default function PharmacyPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [categories, setCategories] = useState(["All"]);
   const [drugs, setDrugs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedDrug, setSelectedDrug] = useState(null);
 
-  const handleAddToCart = (drug) => {
-    window.dispatchEvent(new CustomEvent("addToCart", { detail: drug }));
-  };
-
   useEffect(() => {
-    setLoading(true);
-    fetch("https://api.fda.gov/drug/label.json?limit=20")
-      .then((res) => res.json())
-      .then((data) => {
-        const formattedDrugs = data.results.map((item) => ({
-          name: item.openfda?.brand_name?.[0] || "Unknown Drug",
-          category: item.openfda?.pharm_class_epc?.[0] || "General",
-          price: "₦—",
-          available: true,
-        }));
-        setDrugs(formattedDrugs);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchCategories = async () => {
+      try {
+        const data = await pharmacyAPI.categories();
+        setCategories(["All", ...data]);
+      } catch (err) {
         console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+    fetchCategories();
   }, []);
 
-  const categories = ["All", ...new Set(drugs.map((d) => d.category))];
+  useEffect(() => {
+    const fetchDrugs = async () => {
+      setLoading(true);
+      try {
+        const params = {};
+        if (search) params.search = search;
+        if (category !== "All") params.category = category;
 
-  const filteredDrugs = drugs.filter((drug) => {
-    const matchesName = drug.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === "All" || drug.category === category;
-    return matchesName && matchesCategory;
-  });
+        const data = await pharmacyAPI.list(params);
+        setDrugs(data);
+        setError(null);
+      } catch (err) {
+        setError(err.data?.error || "Failed to load drugs.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const debounce = setTimeout(fetchDrugs, 300);
+    return () => clearTimeout(debounce);
+  }, [search, category]);
+
+  const handleAddToCart = async (drug, quantity) => {
+    try {
+      await cartAPI.add(drug.id, quantity);
+      toast.success(`${quantity}x ${drug.name} added to cart!`);
+      window.dispatchEvent(new CustomEvent("cartUpdated"));
+    } catch (err) {
+      toast.error(err.data?.error || "Failed to add to cart.");
+    }
+  };
 
   return (
     <ProtectedRoute>
       <div className="space-y-8">
 
-        {/* Header */}
         <section className="pharmacy-header">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">
             Pharmacy
@@ -59,7 +74,6 @@ export default function PharmacyPage() {
           </p>
         </section>
 
-        {/* Search & Filter */}
         <section className="flex flex-col sm:flex-row gap-4">
           <form onSubmit={(e) => e.preventDefault()} className="relative w-full sm:w-2/3">
             <input
@@ -85,15 +99,21 @@ export default function PharmacyPage() {
           </select>
         </section>
 
-        {/* Drugs Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
           {loading && Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
 
-          {!loading && filteredDrugs.length > 0 &&
-            filteredDrugs.map((drug, index) => (
+          {error && (
+            <div className="col-span-full text-center py-16">
+              <p className="text-4xl mb-3">⚠️</p>
+              <p className="text-red-500 font-medium">Error: {error}</p>
+            </div>
+          )}
+
+          {!loading && !error && drugs.length > 0 &&
+            drugs.map((drug) => (
               <div
-                key={index}
+                key={drug.id}
                 onClick={() => setSelectedDrug(drug)}
                 className="bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between cursor-pointer"
               >
@@ -103,13 +123,11 @@ export default function PharmacyPage() {
                 <h3 className="font-semibold text-base mt-1" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" }}>
                   {drug.name}
                 </h3>
-                <p className="text-sm font-medium mt-1" style={{ color: "#00cfff" }}>
-                  {drug.category}
-                </p>
+                <p className="text-sm font-medium mt-1" style={{ color: "#00cfff" }}>{drug.category}</p>
                 <div className="flex items-center justify-between mt-4">
-                  <span className="font-bold text-green-600">{drug.price}</span>
-                  <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700">
-                    In Stock
+                  <span className="font-bold text-green-600">₦{drug.price}</span>
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${drug.is_available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {drug.is_available ? "In Stock" : "Out of Stock"}
                   </span>
                 </div>
                 <button
@@ -122,7 +140,7 @@ export default function PharmacyPage() {
             ))
           }
 
-          {!loading && filteredDrugs.length === 0 && (
+          {!loading && !error && drugs.length === 0 && (
             <div className="col-span-full text-center py-16">
               <p className="text-4xl mb-3">💊</p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">No drugs found.</p>
@@ -132,7 +150,6 @@ export default function PharmacyPage() {
 
         </section>
 
-        {/* Pharmacy Modal */}
         {selectedDrug && (
           <PharmacyModal
             drug={selectedDrug}

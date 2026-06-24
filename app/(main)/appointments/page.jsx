@@ -1,29 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import { appointmentsAPI, doctorsAPI } from "../../lib/api";
 
 export default function AppointmentsPage() {
   const router = useRouter();
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
     doctor: "",
     date: "",
+    time: "",
     description: "",
   });
 
-  const doctors = ["Dr. Adebayo", "Dr. Chukwu", "Dr. Ibrahim", "Dr. Johnson"];
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await doctorsAPI.list();
+        setDoctors(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.doctor) {
       toast.error("Please select a doctor.");
       return;
@@ -32,19 +45,37 @@ export default function AppointmentsPage() {
       toast.error("Please select a date.");
       return;
     }
+    if (!formData.time) {
+      toast.error("Please select a time.");
+      return;
+    }
 
-    toast.success(
-      `Appointment with ${formData.doctor} on ${formData.date} booked!`,
-      { duration: 3000 }
-    );
+    setLoading(true);
 
-    setTimeout(() => {
-      router.push(
-        `/confirmation?name=${encodeURIComponent(formData.name)}&doctor=${encodeURIComponent(formData.doctor)}&date=${encodeURIComponent(formData.date)}&email=${encodeURIComponent(formData.email)}`
-      );
-    }, 1500);
+    try {
+      const result = await appointmentsAPI.book({
+        doctor_id: formData.doctor,
+        date: formData.date,
+        time: formData.time,
+        description: formData.description,
+      });
 
-    setFormData({ name: "", email: "", doctor: "", date: "", description: "" });
+      toast.success(result.message, { duration: 3000 });
+
+      const doctor = doctors.find((d) => d.id === parseInt(formData.doctor));
+
+      setTimeout(() => {
+        router.push(
+          `/confirmation?doctor=${encodeURIComponent(doctor?.name || "")}&date=${encodeURIComponent(formData.date)}&ref=${encodeURIComponent(result.appointment.reference_number)}`
+        );
+      }, 1500);
+
+      setFormData({ doctor: "", date: "", time: "", description: "" });
+    } catch (err) {
+      toast.error(err.data?.error || "Failed to book appointment.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,27 +95,6 @@ export default function AppointmentsPage() {
           <form className="space-y-4" onSubmit={handleSubmit}>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
               <select
                 name="doctor"
                 value={formData.doctor}
@@ -94,19 +104,31 @@ export default function AppointmentsPage() {
               >
                 <option value="">Select Doctor</option>
                 {doctors.map((doc) => (
-                  <option key={doc} value={doc}>{doc}</option>
+                  <option key={doc.id} value={doc.id}>
+                    Dr. {doc.name} — {doc.specialty}
+                  </option>
                 ))}
               </select>
 
               <input
                 type="date"
                 name="date"
+                min={new Date().toISOString().split("T")[0]}
                 value={formData.date}
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
+
+            <input
+              type="time"
+              name="time"
+              value={formData.time}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            />
 
             <textarea
               name="description"
@@ -120,9 +142,10 @@ export default function AppointmentsPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition text-sm sm:text-base"
+              disabled={loading}
+              className="w-full bg-blue-600 disabled:bg-blue-400 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition text-sm sm:text-base"
             >
-              Book Appointment
+              {loading ? "Booking..." : "Book Appointment"}
             </button>
           </form>
         </section>

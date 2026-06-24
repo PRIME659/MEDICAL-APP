@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 export default function MainLayout({ children }) {
   const [faqOpen, setFaqOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
 
@@ -25,7 +25,7 @@ export default function MainLayout({ children }) {
   const isDoctors = pathname === "/doctors";
   const isDashboard = pathname === "/dashboard";
 
-  const showFAQ = !isPharmacy && !isDoctors || isDashboard;
+  const showFAQ = (!isPharmacy && !isDoctors) || isDashboard;
   const showCart = isPharmacy;
 
   useEffect(() => {
@@ -33,36 +33,6 @@ export default function MainLayout({ children }) {
     const isAuth = localStorage.getItem("authUser");
     if (isAuth && !isOnboarded) setShowOnboarding(true);
   }, []);
-
-  useEffect(() => {
-    const handleAddToCart = (e) => addToCart(e.detail);
-    window.addEventListener("addToCart", handleAddToCart);
-    return () => window.removeEventListener("addToCart", handleAddToCart);
-  }, []);
-
-  const addToCart = (drug) => {
-    setCartItems((prev) => {
-      const existing = prev.find((i) => i.name === drug.name);
-      if (existing) {
-        return prev.map((i) => i.name === drug.name ? { ...i, quantity: i.quantity + drug.quantity } : i);
-      }
-      return [...prev, drug];
-    });
-  };
-
-  const increaseQty = (name) => {
-    setCartItems((prev) => prev.map((i) => i.name === name ? { ...i, quantity: i.quantity + 1 } : i));
-  };
-
-  const decreaseQty = (name) => {
-    setCartItems((prev) => prev.map((i) =>
-      i.name === name ? i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i : i
-    ).filter((i) => i.quantity > 0));
-  };
-
-  const removeFromCart = (name) => {
-    setCartItems((prev) => prev.filter((i) => i.name !== name));
-  };
 
   return (
     <>
@@ -84,14 +54,7 @@ export default function MainLayout({ children }) {
       {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
 
       <FAQPanel open={faqOpen} onClose={() => setFaqOpen(false)} />
-      <CartPanel
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-        cartItems={cartItems}
-        onIncrease={increaseQty}
-        onDecrease={decreaseQty}
-        onRemove={removeFromCart}
-      />
+      <CartPanel open={cartOpen} onClose={() => setCartOpen(false)} />
 
       {/* FAQ Button */}
       {showFAQ && !faqOpen && (
@@ -113,11 +76,6 @@ export default function MainLayout({ children }) {
             className="bg-white border-2 border-blue-600 text-blue-600 font-bold text-sm w-12 h-12 rounded-md shadow-md hover:bg-blue-50 transition flex items-center justify-center relative"
           >
             <ShoppingCart size={20} />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                {cartItems.length}
-              </span>
-            )}
           </button>
         </div>
       )}

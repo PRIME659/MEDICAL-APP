@@ -1,10 +1,28 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useLanguage } from "../components/LanguageContext";
+import { tipsAPI } from "../lib/api";
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const [tips, setTips] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTips = async () => {
+      try {
+        const data = await tipsAPI.list();
+        setTips(data.slice(0, 3));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTips();
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -123,9 +141,34 @@ export default function HomePage() {
           <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 dark:text-white">
             {t("medicalTips")}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-            {t("medicalTipsDesc")}
-          </p>
+
+          {loading ? (
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Loading tips...</p>
+          ) : tips.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {tips.map((tip) => (
+                <div
+                  key={tip.id}
+                  className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition"
+                >
+                  <div className="text-3xl mb-3">{tip.icon}</div>
+                  <h3 className="font-semibold text-base mb-1" style={{ color: "#4dffa6", textShadow: "0 0 10px rgba(77,255,166,0.3)" }}>
+                    {tip.title}
+                  </h3>
+                  <p className="text-sm font-medium mb-2" style={{ color: "#00cfff" }}>
+                    {tip.category.replace("_", " ")}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {tip.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+              {t("medicalTipsDesc")}
+            </p>
+          )}
         </section>
 
       </div>

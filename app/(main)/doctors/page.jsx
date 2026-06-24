@@ -6,38 +6,50 @@ import DoctorCard from "../../components/DoctorCard";
 import SkeletonCard from "../../components/SkeletonCard";
 import DoctorModal from "../../components/DoctorModal";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import { doctorsAPI } from "../../lib/api";
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
   const [search, setSearch] = useState("");
   const [specialty, setSpecialty] = useState("All");
+  const [specialties, setSpecialties] = useState(["All"]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const fetchSpecialties = async () => {
       try {
-        const res = await fetch("https://69710db778fec16a63ffe6bd.mockapi.io/doctors");
-        if (!res.ok) throw new Error("Failed to fetch doctors");
-        const data = await res.json();
-        setDoctors(data);
+        const data = await doctorsAPI.specialties();
+        setSpecialties(["All", ...data]);
       } catch (err) {
-        setError(err.message);
+        console.error(err);
+      }
+    };
+    fetchSpecialties();
+  }, []);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      setLoading(true);
+      try {
+        const params = {};
+        if (search) params.search = search;
+        if (specialty !== "All") params.specialty = specialty;
+
+        const data = await doctorsAPI.list(params);
+        setDoctors(data);
+        setError(null);
+      } catch (err) {
+        setError(err.data?.error || "Failed to load doctors.");
       } finally {
         setLoading(false);
       }
     };
-    fetchDoctors();
-  }, []);
 
-  const specialties = ["All", ...new Set(doctors.map((d) => d.specialty))];
-
-  const filteredDoctors = doctors.filter((doctor) => {
-    const matchesName = doctor.name.toLowerCase().includes(search.toLowerCase());
-    const matchesSpecialty = specialty === "All" || doctor.specialty === specialty;
-    return matchesName && matchesSpecialty;
-  });
+    const debounce = setTimeout(fetchDoctors, 300);
+    return () => clearTimeout(debounce);
+  }, [search, specialty]);
 
   return (
     <ProtectedRoute>
@@ -88,22 +100,22 @@ export default function DoctorsPage() {
             </div>
           )}
 
-          {!loading && !error && filteredDoctors.length > 0 &&
-            filteredDoctors.map((doctor) => (
+          {!loading && !error && doctors.length > 0 &&
+            doctors.map((doctor) => (
               <DoctorCard
                 key={doctor.id}
                 name={doctor.name}
                 specialty={doctor.specialty}
                 hospital={doctor.hospital}
                 rating={doctor.rating}
-                available={doctor.available}
-                avatar={doctor.avatar}
+                available={doctor.is_available}
+                avatar={doctor.avatar_url}
                 onClick={() => setSelectedDoctor(doctor)}
               />
             ))
           }
 
-          {!loading && !error && filteredDoctors.length === 0 && (
+          {!loading && !error && doctors.length === 0 && (
             <div className="col-span-full text-center py-16">
               <p className="text-4xl mb-3">🔍</p>
               <p className="text-gray-500 dark:text-gray-400 font-medium">No doctors found.</p>
@@ -112,7 +124,6 @@ export default function DoctorsPage() {
           )}
         </section>
 
-        {/* Doctor Modal */}
         {selectedDoctor && (
           <DoctorModal
             doctor={selectedDoctor}

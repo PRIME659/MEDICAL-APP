@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import LanguageToggle from "../components/LanguageToggle";
+import { loginUser, registerUser } from "../lib/auth";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -48,18 +50,57 @@ export default function AuthPage() {
         newErrors.confirm = "Passwords do not match.";
       }
     }
-
     return newErrors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    localStorage.setItem("authUser", "true");
-    router.push("/");
+
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const result = await loginUser(formData.email, formData.password);
+        if (result.success) {
+          toast.success("Login successful!");
+          setTimeout(() => router.push("/"), 1000);
+        } else {
+          toast.error(result.error || "Login failed.");
+        }
+      } else {
+        const nameParts = formData.name.trim().split(" ");
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(" ") || "";
+
+        const result = await registerUser({
+          first_name: firstName,
+          last_name: lastName,
+          email: formData.email,
+          password: formData.password,
+          confirm_password: formData.confirm,
+          role: "patient",
+        });
+
+        if (result.success) {
+          toast.success("Account created successfully!");
+          setTimeout(() => router.push("/"), 1000);
+        } else {
+          const errorMsg = result.error?.email?.[0] ||
+            result.error?.password?.[0] ||
+            result.error?.non_field_errors?.[0] ||
+            "Registration failed.";
+          toast.error(errorMsg);
+        }
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass = "w-full bg-transparent text-white placeholder-white/60 focus:outline-none text-sm";
@@ -69,19 +110,9 @@ export default function AuthPage() {
 
   return (
     <div className="h-screen relative overflow-hidden flex items-center justify-center">
+      <Toaster position="top-right" />
 
-      <div className="absolute top-6 right-6 z-30">
-        <LanguageToggle inline={false} />
-      </div>
-
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      >
+      <video autoPlay loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover z-0">
         <source src="/auth-bg.mp4" type="video/mp4" />
       </video>
 
@@ -90,15 +121,15 @@ export default function AuthPage() {
       <div className="relative z-20 w-full max-w-lg px-4">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 sm:p-10">
 
-          {/* Logo */}
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3), 0 0 50px rgba(59,130,246,0.15)" }}>PrimeHealth</h2>
+            <h2 className="text-3xl font-bold" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" }}>
+              PrimeHealth
+            </h2>
             <p className="text-gray-300 text-sm mt-2">
               {isLogin ? "Welcome back" : "Create your account"}
             </p>
           </div>
 
-          {/* Tab Toggle */}
           <div className="flex rounded-lg overflow-hidden border border-white/20 mb-8">
             <button
               onClick={() => { setIsLogin(true); setErrors({}); setFormData({ name: "", email: "", password: "", confirm: "" }); }}
@@ -114,10 +145,8 @@ export default function AuthPage() {
             </button>
           </div>
 
-          {/* Form Fields */}
           <div className="space-y-4">
 
-            {/* Full Name */}
             {!isLogin && (
               <div>
                 <div className={`${fieldClass} ${errors.name ? errorBorder : normalBorder}`}>
@@ -128,7 +157,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Email */}
             <div>
               <div className={`${fieldClass} ${errors.email ? errorBorder : normalBorder}`}>
                 <label className="block text-xs font-medium text-blue-200 mb-1">Email</label>
@@ -137,7 +165,6 @@ export default function AuthPage() {
               {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <div className={`${fieldClass} ${errors.password ? errorBorder : normalBorder}`}>
                 <label className="block text-xs font-medium text-blue-200 mb-1">Password</label>
@@ -151,7 +178,6 @@ export default function AuthPage() {
               {errors.password && <p className="text-red-400 text-xs mt-1 ml-1">{errors.password}</p>}
             </div>
 
-            {/* Confirm Password */}
             {!isLogin && (
               <div>
                 <div className={`${fieldClass} ${errors.confirm ? errorBorder : normalBorder}`}>
@@ -167,7 +193,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Forgot Password */}
             {isLogin && (
               <div className="text-right">
                 <a href="/forget-password" className="text-xs text-blue-300 hover:text-white transition hover:underline">
@@ -176,22 +201,20 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors duration-200 text-sm mt-1"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-xl transition-colors duration-200 text-sm mt-1"
             >
-              {isLogin ? "Login" : "Create Account"}
+              {loading ? "Please wait..." : isLogin ? "Login" : "Create Account"}
             </button>
 
-            {/* Divider */}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-white/20" />
               <span className="text-xs text-gray-400">or</span>
               <div className="flex-1 h-px bg-white/20" />
             </div>
 
-            {/* Switch mode */}
             <p className="text-center text-sm text-gray-300">
               {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
               <button onClick={() => { setIsLogin(!isLogin); setErrors({}); setFormData({ name: "", email: "", password: "", confirm: "" }); }} className="text-blue-400 font-semibold hover:underline">
@@ -199,17 +222,15 @@ export default function AuthPage() {
               </button>
             </p>
 
-            {/* Back to landing */}
             <p className="text-center text-xs text-gray-400 mt-2">
               <button onClick={() => router.push("/landing")} className="hover:text-white transition">
-                ← Back to Home
+                Back to Home
               </button>
             </p>
 
           </div>
         </div>
       </div>
-
     </div>
   );
 }

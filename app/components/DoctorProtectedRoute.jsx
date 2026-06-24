@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAccessToken, getRefreshToken, refreshAccessToken } from "../lib/api";
+import { getUserRole } from "../lib/auth";
 
-export default function ProtectedRoute({ children }) {
+export default function DoctorProtectedRoute({ children }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
   const [authorized, setAuthorized] = useState(false);
@@ -21,10 +22,16 @@ export default function ProtectedRoute({ children }) {
       }
 
       const newAccess = await refreshAccessToken();
-
       if (!newAccess) {
         setChecking(false);
         router.replace("/landing");
+        return;
+      }
+
+      const role = getUserRole();
+      if (role !== "doctor") {
+        setChecking(false);
+        router.replace("/");
         return;
       }
 

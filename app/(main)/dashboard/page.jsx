@@ -1,42 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import LanguageToggle from "../../components/LanguageToggle";
 import { User, Calendar, Settings, Stethoscope, Pill, LogOut } from "lucide-react";
-import toast from "react-hot-toast";
-import LanguageToggle from "@/app/components/LanguageToggle";
-
-const mockAppointments = [
-  { id: 1, doctor: "Dr. Adebayo", specialty: "Cardiologist", date: "2026-04-10", status: "Upcoming" },
-  { id: 2, doctor: "Dr. Chukwu", specialty: "Dermatologist", date: "2026-03-28", status: "Completed" },
-  { id: 3, doctor: "Dr. Ibrahim", specialty: "Neurologist", date: "2026-03-15", status: "Completed" },
-  { id: 4, doctor: "Dr. Johnson", specialty: "Pediatrician", date: "2026-04-22", status: "Upcoming" },
-];
+import { toast } from "react-hot-toast";
+import { authAPI, appointmentsAPI } from "../../lib/api";
+import { logoutUser } from "../../lib/auth";
 
 const neonStyle = { color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" };
 
 export default function DashboardPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
-  const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+234 800 000 0000",
-    bloodGroup: "O+",
-  });
+  const [profile, setProfile] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [tempProfile, setTempProfile] = useState(profile);
+  const [tempProfile, setTempProfile] = useState({});
 
-  const handleSave = () => {
-    setProfile(tempProfile);
-    setEditing(false);
-    toast.success("Profile updated successfully!");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const profileData = await authAPI.getProfile();
+        setProfile(profileData);
+        setTempProfile({
+          first_name: profileData.first_name,
+          last_name: profileData.last_name,
+          phone: profileData.profile?.phone || "",
+          blood_group: profileData.profile?.blood_group || "",
+        });
+
+        const appts = await appointmentsAPI.list();
+        setAppointments(appts);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const result = await authAPI.updateProfile(tempProfile);
+      setProfile(result.user);
+      setEditing(false);
+      toast.success("Profile updated successfully!");
+    } catch (err) {
+      toast.error("Failed to update profile.");
+    }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("authUser");
-    router.replace("/auth");
+  const handleLogout = async () => {
+    await logoutUser();
+    router.replace("/landing");
+  };
+
+  const handleReschedule = async (id, date, time) => {
+    try {
+      await appointmentsAPI.reschedule(id, { date, time });
+      toast.success("Appointment rescheduled. We will confirm shortly.");
+      const appts = await appointmentsAPI.list();
+      setAppointments(appts);
+    } catch (err) {
+      toast.error(err.data?.error || "Failed to reschedule.");
+    }
+  };
+
+  const handleCancel = async (id) => {
+    try {
+      await appointmentsAPI.cancel(id);
+      toast.success("Appointment cancelled.");
+      const appts = await appointmentsAPI.list();
+      setAppointments(appts);
+    } catch (err) {
+      toast.error(err.data?.error || "Failed to cancel.");
+    }
   };
 
   const tabs = [
@@ -46,11 +88,22 @@ export default function DashboardPage() {
     { id: "settings", label: "Settings", icon: <Settings size={16} /> },
   ];
 
+  if (loading || !profile) {
+    return (
+      <ProtectedRoute>
+        <div className="flex items-center justify-center py-32">
+          <p className="text-gray-500 dark:text-gray-400">Loading dashboard...</p>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  const fullName = `${profile.first_name} ${profile.last_name}`.trim();
+
   return (
     <ProtectedRoute>
       <div className="space-y-6 px-4 md:px-0">
 
-        {/* Header */}
         <section>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
             My Dashboard
@@ -60,7 +113,6 @@ export default function DashboardPage() {
           </p>
         </section>
 
-        {/* Tabs */}
         <div className="flex gap-2 flex-wrap">
           {tabs.map((tab) => (
             <button
@@ -82,53 +134,86 @@ export default function DashboardPage() {
         {activeTab === "profile" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
 
-            {/* Avatar */}
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-2xl font-bold text-blue-600">
-                {profile.name.charAt(0)}
+                {fullName.charAt(0)}
               </div>
               <div>
-                <h2 className="text-lg font-bold" style={neonStyle}>{profile.name}</h2>
+                <h2 className="text-lg font-bold" style={neonStyle}>{fullName}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{profile.email}</p>
               </div>
             </div>
 
-            {/* Fields */}
             <div className="space-y-4">
-              {[
-                { label: "Full Name", key: "name", type: "text" },
-                { label: "Email", key: "email", type: "email" },
-                { label: "Phone", key: "phone", type: "tel" },
-                { label: "Blood Group", key: "bloodGroup", type: "text" },
-              ].map((field) => (
-                <div key={field.key}>
-                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                    {field.label}
-                  </label>
-                  {editing ? (
-                    <input
-                      type={field.type}
-                      value={tempProfile[field.key]}
-                      onChange={(e) => setTempProfile({ ...tempProfile, [field.key]: e.target.value })}
-                      className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    />
-                  ) : (
-                    <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">
-                      {profile[field.key]}
-                    </p>
-                  )}
-                </div>
-              ))}
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">First Name</label>
+                {editing ? (
+                  <input
+                    type="text"
+                    value={tempProfile.first_name}
+                    onChange={(e) => setTempProfile({ ...tempProfile, first_name: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">{profile.first_name}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Last Name</label>
+                {editing ? (
+                  <input
+                    type="text"
+                    value={tempProfile.last_name}
+                    onChange={(e) => setTempProfile({ ...tempProfile, last_name: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">{profile.last_name}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Email</label>
+                <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">{profile.email}</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Phone</label>
+                {editing ? (
+                  <input
+                    type="tel"
+                    value={tempProfile.phone}
+                    onChange={(e) => setTempProfile({ ...tempProfile, phone: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">{profile.profile?.phone || "Not set"}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Blood Group</label>
+                {editing ? (
+                  <input
+                    type="text"
+                    value={tempProfile.blood_group}
+                    onChange={(e) => setTempProfile({ ...tempProfile, blood_group: e.target.value })}
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <p className="text-sm text-gray-900 dark:text-white px-4 py-2 bg-gray-50 dark:bg-[#0f172a] rounded-lg">{profile.profile?.blood_group || "Not set"}</p>
+                )}
+              </div>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-3 mt-6">
               {editing ? (
                 <>
                   <button onClick={handleSave} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-semibold transition">
                     Save Changes
                   </button>
-                  <button onClick={() => { setEditing(false); setTempProfile(profile); }} className="flex-1 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition">
+                  <button onClick={() => setEditing(false)} className="flex-1 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition">
                     Cancel
                   </button>
                 </>
@@ -146,53 +231,28 @@ export default function DashboardPage() {
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
             <h2 className="text-lg font-bold mb-4" style={neonStyle}>Appointment History</h2>
 
-            {mockAppointments.length > 0 ? (
+            {appointments.length > 0 ? (
               <div className="space-y-3">
-                {mockAppointments.map((appt) => (
+                {appointments.map((appt) => (
                   <div key={appt.id} className="p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{appt.doctor}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{appt.specialty}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date}</p>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">Dr. {appt.doctor.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{appt.doctor.specialty}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{appt.date} at {appt.time}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">Ref: {appt.reference_number}</p>
                       </div>
-                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${appt.status === "Upcoming"
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium capitalize ${appt.status === "pending" || appt.status === "confirmed"
                         ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                        : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"}`}>
+                        : appt.status === "completed"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}>
                         {appt.status}
                       </span>
                     </div>
 
-                    {appt.status === "Upcoming" && (
-                      <div className="space-y-2 mt-2">
-                        <input
-                          type="date"
-                          min={new Date().toISOString().split("T")[0]}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              toast.success(`Appointment with ${appt.doctor} rescheduled to ${e.target.value}. Subject to doctor availability — we will confirm shortly.`, { duration: 5000 });
-                            }
-                          }}
-                          className="w-full border border-blue-400 dark:border-blue-500 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => toast.success(`Reschedule request sent for ${appt.doctor}. We will contact you shortly.`, { duration: 4000 })}
-                            className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-                          >
-                            Confirm Reschedule
-                          </button>
-                          <button
-                            onClick={() => toast.error(`Appointment with ${appt.doctor} on ${appt.date} has been cancelled.`, { duration: 4000 })}
-                            className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-red-400 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-                          Subject to doctor availability — we will confirm shortly.
-                        </p>
-                      </div>
+                    {(appt.status === "pending" || appt.status === "confirmed" || appt.status === "rescheduled") && (
+                      <RescheduleControls appt={appt} onReschedule={handleReschedule} onCancel={handleCancel} />
                     )}
                   </div>
                 ))}
@@ -216,7 +276,7 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {mockAppointments.length > 0 && (
+            {appointments.length > 0 && (
               <button
                 onClick={() => router.push("/appointments")}
                 className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
@@ -261,6 +321,14 @@ export default function DashboardPage() {
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 space-y-4">
             <h2 className="text-lg font-bold mb-4" style={neonStyle}>Account Settings</h2>
 
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Language</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+              </div>
+              <LanguageToggle inline={true} />
+            </div>
+
             {[
               { label: "Email Notifications", desc: "Receive appointment reminders via email" },
               { label: "SMS Notifications", desc: "Receive updates via text message" },
@@ -278,14 +346,6 @@ export default function DashboardPage() {
               </div>
             ))}
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
-              <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">Language</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Choose your preferred language</p>
-              </div>
-              <LanguageToggle inline={true} />
-            </div>
-
             <button
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 mt-4 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
@@ -298,5 +358,50 @@ export default function DashboardPage() {
 
       </div>
     </ProtectedRoute>
+  );
+}
+
+function RescheduleControls({ appt, onReschedule, onCancel }) {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+
+  return (
+    <div className="space-y-2 mt-2">
+      <div className="flex gap-2">
+        <input
+          type="date"
+          min={new Date().toISOString().split("T")[0]}
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="flex-1 border border-blue-400 dark:border-blue-500 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          className="flex-1 border border-blue-400 dark:border-blue-500 rounded-lg px-3 py-1.5 text-xs text-gray-900 dark:text-white dark:bg-[#0f172a] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            if (!date || !time) return;
+            onReschedule(appt.id, date, time);
+          }}
+          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+        >
+          Confirm Reschedule
+        </button>
+        <button
+          onClick={() => onCancel(appt.id)}
+          className="flex-1 py-1.5 rounded-lg text-xs font-semibold border border-red-400 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+        >
+          Cancel
+        </button>
+      </div>
+      <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+        Subject to doctor availability — we will confirm shortly.
+      </p>
+    </div>
   );
 }
