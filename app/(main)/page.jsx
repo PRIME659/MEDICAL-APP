@@ -29,6 +29,8 @@ export default function HomePage() {
     <ProtectedRoute>
       <div className="space-y-16">
 
+        <p className="text-gray-900 dark:text-white">Page loaded successfully</p>
+        
         {/* Hero Section */}
         <section
           className="text-center py-12 sm:py-20 rounded-lg px-4"
