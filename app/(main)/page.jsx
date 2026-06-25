@@ -14,9 +14,10 @@ export default function HomePage() {
     const fetchTips = async () => {
       try {
         const data = await tipsAPI.list();
-        setTips(data.slice(0, 3));
+        setTips(Array.isArray(data) ? data.slice(0, 3) : []);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load tips:", err);
+        setTips([]);
       } finally {
         setLoading(false);
       }
@@ -61,7 +62,6 @@ export default function HomePage() {
               className="w-full h-[300px] object-cover rounded-2xl transition duration-500 group-hover:scale-105 group-hover:brightness-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-b-2xl" />
           </div>
           <div>
             <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
@@ -90,7 +90,6 @@ export default function HomePage() {
               className="w-full h-[300px] object-cover rounded-2xl transition duration-500 group-hover:scale-105 group-hover:brightness-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-b-2xl" />
           </div>
         </section>
 
@@ -103,7 +102,6 @@ export default function HomePage() {
               className="w-full h-[300px] object-cover rounded-2xl transition duration-500 group-hover:scale-105 group-hover:brightness-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-b-2xl" />
           </div>
           <div>
             <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
@@ -132,7 +130,6 @@ export default function HomePage() {
               className="w-full h-[300px] object-cover rounded-2xl transition duration-500 group-hover:scale-105 group-hover:brightness-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/10 backdrop-blur-sm border-t border-white/20 rounded-b-2xl" />
           </div>
         </section>
 
@@ -143,7 +140,15 @@ export default function HomePage() {
           </h2>
 
           {loading ? (
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Loading tips...</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 p-5 animate-pulse">
+                  <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full mb-3" />
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+                </div>
+              ))}
+            </div>
           ) : tips.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {tips.map((tip) => (
@@ -155,11 +160,11 @@ export default function HomePage() {
                   <h3 className="font-semibold text-base mb-1" style={{ color: "#4dffa6", textShadow: "0 0 10px rgba(77,255,166,0.3)" }}>
                     {tip.title}
                   </h3>
-                  <p className="text-sm font-medium mb-2" style={{ color: "#00cfff" }}>
-                    {tip.category.replace("_", " ")}
+                  <p className="text-sm font-medium mb-2 capitalize" style={{ color: "#00cfff" }}>
+                    {typeof tip.category === "string" ? tip.category.replace("_", " ") : ""}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {tip.content}
+                    {typeof tip.content === "string" ? tip.content : ""}
                   </p>
                 </div>
               ))}
