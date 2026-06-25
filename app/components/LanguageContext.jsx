@@ -120,7 +120,10 @@ export function LanguageProvider({ children }) {
     localStorage.setItem("language", lang);
   };
 
-  const t = (key) => translations[language]?.[key] || translations.en[key] || key;
+  const t = (key) => {
+  const value = translations[language]?.[key] || translations.en[key] || key;
+  return typeof value === "string" ? value : key;
+};
 
   return (
     <LanguageContext.Provider value={{ language, changeLanguage, t }}>

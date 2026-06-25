@@ -5,7 +5,6 @@ import MedicalBackground from "../components/MedicalBackground";
 import FAQPanel from "../components/FAQPanel";
 import Footer from "../components/Footer";
 import PageTransition from "../components/PageTransition";
-import ErrorBoundary from "../components/ErrorBoundary";
 import CartPanel from "../components/CartPanel";
 import BackToTop from "../components/BackToTop";
 import ChatBot from "../components/ChatBot";
@@ -15,12 +14,9 @@ import { Toaster } from "react-hot-toast";
 import { ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-
-
 export default function MainLayout({ children }) {
   const [faqOpen, setFaqOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
 
@@ -42,15 +38,8 @@ export default function MainLayout({ children }) {
       <div className="fixed inset-0 -z-10">
         <MedicalBackground />
       </div>
-      <Navbar />
 
-      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto">
-        <PageTransition>
-          <ErrorBoundary>
-            {children}
-          </ErrorBoundary>
-        </PageTransition>
-      </main>
+      <Navbar />
 
       <Toaster
         position="top-right"
@@ -99,6 +88,7 @@ export default function MainLayout({ children }) {
           {children}
         </PageTransition>
       </main>
+
       <Footer />
     </>
   );
