@@ -69,7 +69,10 @@ export default function AuthPage() {
           toast.success("Login successful!");
           setTimeout(() => router.push("/"), 1000);
         } else {
-          toast.error(result.error || "Login failed.");
+          const errorMsg = typeof result.error === "string"
+            ? result.error
+            : "Login failed. Please check your credentials.";
+          toast.error(errorMsg);
         }
       } else {
         const nameParts = formData.name.trim().split(" ");
@@ -89,14 +92,26 @@ export default function AuthPage() {
           toast.success("Account created successfully!");
           setTimeout(() => router.push("/"), 1000);
         } else {
-          const errorMsg = result.error?.email?.[0] ||
-            result.error?.password?.[0] ||
-            result.error?.non_field_errors?.[0] ||
-            "Registration failed.";
+          let errorMsg = "Registration failed.";
+          if (result.error) {
+            if (typeof result.error === "string") {
+              errorMsg = result.error;
+            } else if (result.error.email?.[0]) {
+              errorMsg = result.error.email[0];
+            } else if (result.error.password?.[0]) {
+              errorMsg = result.error.password[0];
+            } else if (result.error.non_field_errors?.[0]) {
+              errorMsg = result.error.non_field_errors[0];
+            } else if (result.error.detail) {
+              errorMsg = typeof result.error.detail === "string"
+                ? result.error.detail
+                : "Registration failed.";
+            }
+          }
           toast.error(errorMsg);
         }
       }
-    } catch {
+    } catch (err) {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
