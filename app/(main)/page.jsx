@@ -16,7 +16,6 @@ export default function HomePage() {
         const data = await tipsAPI.list();
         setTips(Array.isArray(data) ? data.slice(0, 3) : []);
       } catch (err) {
-        console.error("Failed to load tips:", err);
         setTips([]);
       } finally {
         setLoading(false);
@@ -30,7 +29,7 @@ export default function HomePage() {
       <div className="space-y-16">
 
         <p className="text-gray-900 dark:text-white">Page loaded successfully</p>
-        
+
         {/* Hero Section */}
         <section
           className="text-center py-12 sm:py-20 rounded-lg px-4"

@@ -74,29 +74,40 @@ export const apiRequest = async (endpoint, options = {}) => {
     return response;
   };
 
-  let response = await makeRequest(token);
+  try {
+    let response = await makeRequest(token);
 
-  // If 401 try refreshing token
-  if (response.status === 401) {
-    const newToken = await refreshAccessToken();
-    if (newToken) {
-      response = await makeRequest(newToken);
-    } else {
-      clearTokens();
-      if (typeof window !== "undefined") {
-        window.location.href = "/auth";
+    // If 401 try refreshing token
+    if (response.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        response = await makeRequest(newToken);
+      } else {
+        clearTokens();
+        if (typeof window !== "undefined") {
+          window.location.href = "/landing";
+        }
+        return null;
       }
-      return null;
     }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw { status: response.status, data };
+    }
+
+    return data;
+
+  } catch (err) {
+    // If it's our structured error rethrow it
+    if (err?.status && err?.data) {
+      throw err;
+    }
+    // Network error or CORS — return null instead of crashing
+    console.error("Network error:", err);
+    return null;
   }
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw { status: response.status, data };
-  }
-
-  return data;
 };
 
 // ── Auth API ───────────────────────────────────────────────────

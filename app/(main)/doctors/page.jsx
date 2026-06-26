@@ -36,17 +36,16 @@ export default function DoctorsPage() {
         const params = {};
         if (search) params.search = search;
         if (specialty !== "All") params.specialty = specialty;
-
         const data = await doctorsAPI.list(params);
-        setDoctors(data);
+        setDoctors(Array.isArray(data) ? data : []);
         setError(null);
       } catch (err) {
-        setError(err.data?.error || "Failed to load doctors.");
+        setError("Failed to load doctors.");
+        setDoctors([]);
       } finally {
         setLoading(false);
       }
     };
-
     const debounce = setTimeout(fetchDoctors, 300);
     return () => clearTimeout(debounce);
   }, [search, specialty]);
