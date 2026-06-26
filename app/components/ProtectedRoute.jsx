@@ -10,20 +10,16 @@ export default function ProtectedRoute({ children }) {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    const verify = () => {
-      const access = getAccessToken();
-      const refresh = getRefreshToken();
+    const access = getAccessToken();
+    const refresh = getRefreshToken();
 
-      if (!access && !refresh) {
-        router.replace("/landing");
-        return;
-      }
+    if (!access && !refresh) {
+      router.replace("/landing");
+      return;
+    }
 
-      setAuthorized(true);
-      setChecking(false);
-    };
-
-    verify();
+    setAuthorized(true);
+    setChecking(false);
   }, [router]);
 
   if (checking) {

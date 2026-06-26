@@ -24,16 +24,17 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const profileData = await authAPI.getProfile();
+        if (!profileData) return;
         setProfile(profileData);
         setTempProfile({
-          first_name: profileData.first_name,
-          last_name: profileData.last_name,
+          first_name: profileData.first_name || "",
+          last_name: profileData.last_name || "",
           phone: profileData.profile?.phone || "",
           blood_group: profileData.profile?.blood_group || "",
         });
 
         const appts = await appointmentsAPI.list();
-        setAppointments(appts);
+        setAppointments(Array.isArray(appts) ? appts : []);
       } catch (err) {
         console.error(err);
       } finally {

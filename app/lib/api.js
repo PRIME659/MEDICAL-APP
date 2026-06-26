@@ -45,17 +45,17 @@ export const refreshAccessToken = async () => {
       const data = await response.json();
       localStorage.setItem("access_token", data.access);
       return data.access;
-    } else {
-      clearTokens();
-      return null;
     }
+
+    // Don't throw — just clear and return null
+    clearTokens();
+    return null;
   } catch {
     clearTokens();
     return null;
   }
 };
 
-// ── Main API Request Function ──────────────────────────────────
 export const apiRequest = async (endpoint, options = {}) => {
   let token = getAccessToken();
 
@@ -66,22 +66,27 @@ export const apiRequest = async (endpoint, options = {}) => {
       ...options.headers,
     };
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
-
-    return response;
+    try {
+      const response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
+      return response;
+    } catch {
+      return null;
+    }
   };
 
   try {
     let response = await makeRequest(token);
 
-    // If 401 try refreshing token
+    if (!response) return null;
+
     if (response.status === 401) {
       const newToken = await refreshAccessToken();
       if (newToken) {
         response = await makeRequest(newToken);
+        if (!response) return null;
       } else {
         clearTokens();
         if (typeof window !== "undefined") {
@@ -91,21 +96,19 @@ export const apiRequest = async (endpoint, options = {}) => {
       }
     }
 
-    const data = await response.json();
-
     if (!response.ok) {
-      throw { status: response.status, data };
+      const errorData = await response.json().catch(() => ({ error: "Request failed" }));
+      throw { status: response.status, data: errorData };
     }
 
+    const data = await response.json().catch(() => null);
     return data;
 
   } catch (err) {
-    // If it's our structured error rethrow it
     if (err?.status && err?.data) {
       throw err;
     }
-    // Network error or CORS — return null instead of crashing
-    console.error("Network error:", err);
+    console.error("Request error:", err);
     return null;
   }
 };
