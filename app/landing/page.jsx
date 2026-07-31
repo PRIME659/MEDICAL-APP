@@ -114,11 +114,25 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ fontFamily: "'Playpen Sans', cursive" }}>
 
-      {/* Language Toggle */}
-      <div className="fixed top-6 right-6 z-[9999]">
+      {/* Language toggle Top right controls */}
+      <div className="fixed top-6 right-6 z-[9999] flex items-center gap-3">
+        <button
+          onClick={() => {
+            const isDark = document.documentElement.classList.contains("dark");
+            if (isDark) {
+              document.documentElement.classList.remove("dark");
+              localStorage.setItem("darkMode", "false");
+            } else {
+              document.documentElement.classList.add("dark");
+              localStorage.setItem("darkMode", "true");
+            }
+          }}
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 transition text-white"
+        >
+          🌙
+        </button>
         <LanguageToggle inline={false} />
       </div>
-
       {/* ── HERO ──────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"

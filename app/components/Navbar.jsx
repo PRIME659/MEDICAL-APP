@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Stethoscope, Pill, Calendar, Home, LayoutDashboard, X, UserCircle } from "lucide-react";
+import { Stethoscope, Pill, Calendar, Home, LayoutDashboard, X, UserCircle, Moon, Sun } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -69,6 +69,12 @@ export default function Navbar() {
     if (!navRef.current) return;
     const rect = navRef.current.getBoundingClientRect();
     setCursorPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("darkMode", String(newMode));
   };
 
   const navItems = [
@@ -146,6 +152,17 @@ export default function Navbar() {
                 </span>
               </Link>
             ))}
+
+            {/* Dark mode toggle — desktop only */}
+            <button
+              onClick={toggleDarkMode}
+              className="flex flex-col items-center justify-center text-blue-700 hover:text-emerald-500 transition-all duration-200 hover:scale-110 group"
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              <span className="text-[10px] font-medium leading-none max-h-0 overflow-hidden opacity-0 group-hover:max-h-4 group-hover:opacity-100 transition-all duration-200">
+                {darkMode ? "Light" : "Dark"}
+              </span>
+            </button>
           </div>
 
           {/* Mobile hamburger */}
@@ -179,19 +196,27 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
+
+          {/* Divider */}
+          <div className="border-t border-gray-100 dark:border-slate-700 my-2" />
+
+          {/* Dark mode toggle — inside mobile menu */}
+          <button
+            onClick={() => { toggleDarkMode(); setMobileMenuOpen(false); }}
+            className="flex items-center gap-3 px-5 py-3 text-sm font-medium transition hover:bg-gray-50 dark:hover:bg-slate-700 w-full text-blue-700 dark:text-blue-400"
+          >
+            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
         </div>
       )}
 
-      {/* Dark mode toggle */}
+      {/* Dark mode toggle — desktop fixed position only */}
       <div
-        onClick={() => {
-          const newMode = !darkMode;
-          setDarkMode(newMode);
-          localStorage.setItem("darkMode", String(newMode));
-        }}
-        className="fixed bottom-6 right-4 md:top-6 md:bottom-auto md:right-16 cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-[#2d2d2d] hover:bg-[#333] transition-transform duration-300 hover:scale-110 active:scale-95 z-50"
+        onClick={toggleDarkMode}
+        className="hidden md:flex fixed top-6 right-16 cursor-pointer w-10 h-10 items-center justify-center rounded-full bg-[#2d2d2d] hover:bg-[#333] transition-transform duration-300 hover:scale-110 active:scale-95 z-50"
       >
-        🌙
+        {darkMode ? <Sun size={16} className="text-white" /> : <Moon size={16} className="text-white" />}
       </div>
     </div>
   );
