@@ -12,9 +12,17 @@ export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const navRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const pathname = usePathname();
+
+  // Reset scroll state on every page change
+  useEffect(() => {
+    setScrolled(window.scrollY > 80);
+    setMobileMenuOpen(false);
+    setExpanded(false);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -44,8 +52,6 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const handleModalOpen = (e) => {
@@ -122,7 +128,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Desktop nav icons — labels show on hover */}
+          {/* Desktop nav icons */}
           <div className="hidden sm:flex items-center gap-3 sm:gap-5 relative z-10">
             {navItems.map((item) => (
               <Link
@@ -142,22 +148,21 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Mobile hamburger button */}
+          {/* Mobile hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="sm:hidden relative z-10 text-blue-700 hover:text-emerald-500 transition"
           >
             {mobileMenuOpen ? <X size={22} /> : <LayoutDashboard size={22} />}
           </button>
-
         </div>
       </nav>
 
-      {/* Mobile dropdown menu */}
+      {/* Mobile dropdown */}
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="fixed top-20 right-4 z-[9998] bg-white dark:bg-[#1e293b] rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 py-3 w-52 animate-dropdown"
+          className="fixed top-20 right-4 z-[9998] bg-white dark:bg-[#1e293b] rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-700 py-3 w-52"
         >
           {navItems.map((item) => (
             <Link
