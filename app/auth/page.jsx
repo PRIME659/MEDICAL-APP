@@ -13,7 +13,8 @@ export default function AuthPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirm: "",
@@ -30,8 +31,8 @@ export default function AuthPage() {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!isLogin && !formData.name.trim()) {
-      newErrors.name = "Full name is required.";
+    if (!isLogin && !formData.firstName.trim()) {
+      newErrors.name = "First name is required.";
     }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
@@ -76,12 +77,10 @@ export default function AuthPage() {
         }
       } else {
         const nameParts = formData.name.trim().split(" ");
-        const firstName = nameParts[0];
-        const lastName = nameParts.slice(1).join(" ") || "";
 
         const result = await registerUser({
-          first_name: firstName,
-          last_name: lastName,
+          first_name: formData.firstName.trim(),
+          last_name: formData.lastName.trim(),
           email: formData.email,
           password: formData.password,
           confirm_password: formData.confirm,
@@ -98,6 +97,8 @@ export default function AuthPage() {
               errorMsg = result.error;
             } else if (result.error.email?.[0]) {
               errorMsg = result.error.email[0];
+              // Set field level error for email
+              setErrors({ email: result.error.email[0] });
             } else if (result.error.password?.[0]) {
               errorMsg = result.error.password[0];
             } else if (result.error.non_field_errors?.[0]) {
@@ -133,8 +134,8 @@ export default function AuthPage() {
 
       <div className="absolute inset-0 bg-black/55 z-10" />
 
-      <div className="relative z-20 w-full max-w-lg px-4">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 sm:p-10">
+      <div className="relative z-20 w-full max-w-xl px-4">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-5 sm:p-7">
 
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold" style={{ color: "#4dffa6", textShadow: "0 0 15px rgba(77,255,166,0.4), 0 0 30px rgba(59,130,246,0.3)" }}>
@@ -147,14 +148,20 @@ export default function AuthPage() {
 
           <div className="flex rounded-lg overflow-hidden border border-white/20 mb-8">
             <button
-              onClick={() => { setIsLogin(true); setErrors({}); setFormData({ name: "", email: "", password: "", confirm: "" }); }}
-              className={`flex-1 py-2.5 text-sm font-semibold transition-colors duration-200 ${isLogin ? "bg-blue-600 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"}`}
+              onClick={() => {
+                setIsLogin(true);
+                setErrors({});
+                setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
+              }}
             >
               Login
             </button>
             <button
-              onClick={() => { setIsLogin(false); setErrors({}); setFormData({ name: "", email: "", password: "", confirm: "" }); }}
-              className={`flex-1 py-2.5 text-sm font-semibold transition-colors duration-200 ${!isLogin ? "bg-blue-600 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"}`}
+              onClick={() => {
+                setIsLogin(false);
+                setErrors({});
+                setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
+              }}
             >
               Sign Up
             </button>
@@ -163,12 +170,34 @@ export default function AuthPage() {
           <div className="space-y-4">
 
             {!isLogin && (
-              <div>
-                <div className={`${fieldClass} ${errors.name ? errorBorder : normalBorder}`}>
-                  <label className="block text-xs font-medium text-blue-200 mb-1">Full Name</label>
-                  <input name="name" type="text" placeholder="John Doe" value={formData.name} onChange={handleChange} className={inputClass} />
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <div className={`${fieldClass} ${errors.name ? errorBorder : normalBorder}`}>
+                    <label className="block text-xs font-medium text-blue-200 mb-1">First Name</label>
+                    <input
+                      name="firstName"
+                      type="text"
+                      placeholder="John"
+                      value={formData.firstName || ""}
+                      onChange={handleChange}
+                      className={inputClass}
+                    />
+                  </div>
+                  {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name}</p>}
                 </div>
-                {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name}</p>}
+                <div className="flex-1">
+                  <div className={`${fieldClass} ${normalBorder}`}>
+                    <label className="block text-xs font-medium text-blue-200 mb-1">Last Name</label>
+                    <input
+                      name="lastName"
+                      type="text"
+                      placeholder="Doe"
+                      value={formData.lastName || ""}
+                      onChange={handleChange}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
               </div>
             )}
 
