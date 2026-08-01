@@ -25,7 +25,7 @@ export default function ProtectedRoute({ children }) {
   if (checking) {
     return (
       <div className="flex items-center justify-center py-32">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Loading...</p>
+        <div className="w-8 h-8 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
       </div>
     );
   }

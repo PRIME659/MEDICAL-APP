@@ -146,22 +146,39 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="flex rounded-lg overflow-hidden border border-white/20 mb-8">
+          <div className="flex gap-3 mb-6">
             <button
               onClick={() => {
                 setIsLogin(true);
                 setErrors({});
                 setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
               }}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 border-2 ${isLogin
+                  ? "text-white border-transparent"
+                  : "bg-transparent border-white/30 text-white/70 hover:text-white hover:border-white/50"
+                }`}
+              style={isLogin ? {
+                background: "linear-gradient(135deg, #3b82f6, #10b981)",
+                boxShadow: "0 4px 20px rgba(59,130,246,0.4)",
+              } : {}}
             >
-              Login
+              Log In
             </button>
+
             <button
               onClick={() => {
                 setIsLogin(false);
                 setErrors({});
                 setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
               }}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 border-2 ${!isLogin
+                  ? "text-white border-transparent"
+                  : "bg-transparent border-white/30 text-white/70 hover:text-white hover:border-white/50"
+                }`}
+              style={!isLogin ? {
+                background: "linear-gradient(135deg, #3b82f6, #10b981)",
+                boxShadow: "0 4px 20px rgba(59,130,246,0.4)",
+              } : {}}
             >
               Sign Up
             </button>
