@@ -76,7 +76,6 @@ export default function AuthPage() {
           toast.error(errorMsg);
         }
       } else {
-        const nameParts = formData.name.trim().split(" ");
 
         const result = await registerUser({
           first_name: formData.firstName.trim(),
@@ -149,38 +148,13 @@ export default function AuthPage() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => {
-                setIsLogin(true);
+                setIsLogin(!isLogin);
                 setErrors({});
                 setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
               }}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 border-2 ${isLogin
-                  ? "text-white border-transparent"
-                  : "bg-transparent border-white/30 text-white/70 hover:text-white hover:border-white/50"
-                }`}
-              style={isLogin ? {
-                background: "linear-gradient(135deg, #3b82f6, #10b981)",
-                boxShadow: "0 4px 20px rgba(59,130,246,0.4)",
-              } : {}}
+              className="text-blue-400 font-semibold hover:underline"
             >
-              Log In
-            </button>
-
-            <button
-              onClick={() => {
-                setIsLogin(false);
-                setErrors({});
-                setFormData({ firstName: "", lastName: "", email: "", password: "", confirm: "" });
-              }}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 border-2 ${!isLogin
-                  ? "text-white border-transparent"
-                  : "bg-transparent border-white/30 text-white/70 hover:text-white hover:border-white/50"
-                }`}
-              style={!isLogin ? {
-                background: "linear-gradient(135deg, #3b82f6, #10b981)",
-                boxShadow: "0 4px 20px rgba(59,130,246,0.4)",
-              } : {}}
-            >
-              Sign Up
+              {isLogin ? "Sign Up" : "Login"}
             </button>
           </div>
 
@@ -190,7 +164,7 @@ export default function AuthPage() {
               <div className="flex gap-3">
                 <div className="flex-1">
                   <div className={`${fieldClass} ${errors.name ? errorBorder : normalBorder}`}>
-                    <label className="block text-xs font-medium text-blue-200 mb-1">First Name</label>
+                    <label className="block text-xs font-medium text-white mb-1">First Name</label>
                     <input
                       name="firstName"
                       type="text"
@@ -204,7 +178,7 @@ export default function AuthPage() {
                 </div>
                 <div className="flex-1">
                   <div className={`${fieldClass} ${normalBorder}`}>
-                    <label className="block text-xs font-medium text-blue-200 mb-1">Last Name</label>
+                    <label className="block text-xs font-medium text-white mb-1">Last Name</label>
                     <input
                       name="lastName"
                       type="text"
@@ -220,7 +194,7 @@ export default function AuthPage() {
 
             <div>
               <div className={`${fieldClass} ${errors.email ? errorBorder : normalBorder}`}>
-                <label className="block text-xs font-medium text-blue-200 mb-1">Email</label>
+                <label className="block text-xs font-medium text-white mb-1">Email</label>
                 <input name="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} className={inputClass} />
               </div>
               {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email}</p>}
@@ -228,7 +202,7 @@ export default function AuthPage() {
 
             <div>
               <div className={`${fieldClass} ${errors.password ? errorBorder : normalBorder}`}>
-                <label className="block text-xs font-medium text-blue-200 mb-1">Password</label>
+                <label className="block text-xs font-medium text-white mb-1">Password</label>
                 <div className="relative">
                   <input name="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={formData.password} onChange={handleChange} className={`${inputClass} pr-12`} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-300 hover:text-white text-xs font-medium transition">
@@ -242,7 +216,7 @@ export default function AuthPage() {
             {!isLogin && (
               <div>
                 <div className={`${fieldClass} ${errors.confirm ? errorBorder : normalBorder}`}>
-                  <label className="block text-xs font-medium text-blue-200 mb-1">Confirm Password</label>
+                  <label className="block text-xs font-medium text-white mb-1">Confirm Password</label>
                   <div className="relative">
                     <input name="confirm" type={showConfirm ? "text" : "password"} placeholder="••••••••" value={formData.confirm} onChange={handleChange} className={`${inputClass} pr-12`} />
                     <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-300 hover:text-white text-xs font-medium transition">
