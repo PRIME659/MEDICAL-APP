@@ -68,12 +68,18 @@ export default function AuthPage() {
         const result = await loginUser(formData.email, formData.password);
         if (result.success) {
           toast.success("Login successful!");
-          setTimeout(() => router.push("/"), 1000);
-        } else {
-          const errorMsg = typeof result.error === "string"
-            ? result.error
-            : "Login failed. Please check your credentials.";
-          toast.error(errorMsg);
+          const role = result.role;
+          setTimeout(() => {
+            if (role === "doctor") {
+              router.push("/doctor/dashboard");
+            } else if (role === "admin" || role === "super_admin") {
+              router.push("/admin-portal/dashboard");
+            } else if (role === "pharmacist") {
+              router.push("/pharmacist/dashboard");
+            } else {
+              router.push("/");
+            }
+          }, 1000);
         }
       } else {
 

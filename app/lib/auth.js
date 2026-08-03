@@ -19,7 +19,7 @@ export const loginUser = async (email, password) => {
       localStorage.setItem("userRole", data.user.profile?.role || "patient");
       localStorage.setItem("userName", `${data.user.first_name} ${data.user.last_name}`);
       localStorage.setItem("userEmail", data.user.email);
-      return { success: true, data };
+      return { success: true, data, role: data.user.profile?.role || "patient" };
     } else {
       const errorMsg = typeof data.error === "string"
         ? data.error
