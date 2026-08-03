@@ -121,28 +121,22 @@ export default function AppointmentsPage() {
                   placeholder="Select appointment date"
                   className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
-                {!formData.date && (
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
-                    Select appointment date
-                  </span>
-                )}
               </div>
             </div>
 
-            <div className="relative w-full">
+            <div className="w-full">
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Appointment Time
+              </label>
               <input
                 type="time"
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                onClick={(e) => e.target.showPicker?.()}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer"
               />
-              {!formData.time && (
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">
-                  Select appointment time
-                </span>
-              )}
             </div>
 
             <textarea
