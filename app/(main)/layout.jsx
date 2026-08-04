@@ -2,7 +2,6 @@
 
 import Navbar from "../components/Navbar";
 import MedicalBackground from "../components/MedicalBackground";
-import FAQPanel from "../components/FAQPanel";
 import Footer from "../components/Footer";
 import PageTransition from "../components/PageTransition";
 import CartPanel from "../components/CartPanel";
@@ -15,16 +14,13 @@ import { ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function MainLayout({ children }) {
-  const [faqOpen, setFaqOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
 
   const isPharmacy = pathname === "/pharmacy";
   const isDoctors = pathname === "/doctors";
-  const isDashboard = pathname === "/dashboard";
 
-  const showFAQ = (!isPharmacy && !isDoctors) || isDashboard;
   const showCart = isPharmacy;
 
   useEffect(() => {
@@ -53,20 +49,8 @@ export default function MainLayout({ children }) {
 
       {showOnboarding && <Onboarding onComplete={() => setShowOnboarding(false)} />}
 
-      <FAQPanel open={faqOpen} onClose={() => setFaqOpen(false)} />
       <CartPanel open={cartOpen} onClose={() => setCartOpen(false)} />
 
-      {/* FAQ Button */}
-      {showFAQ && !faqOpen && (
-        <div className="fixed bottom-6 left-6 z-[9998]">
-          <button
-            onClick={() => setFaqOpen(true)}
-            className="bg-white border-2 border-green-600 text-black font-bold text-sm w-12 h-12 rounded-md shadow-md hover:bg-green-50 transition"
-          >
-            FAQ
-          </button>
-        </div>
-      )}
 
       {/* Cart Button */}
       {showCart && (

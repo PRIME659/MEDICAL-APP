@@ -4,11 +4,41 @@ import { useState, useEffect } from "react";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useLanguage } from "../components/LanguageContext";
 import { tipsAPI } from "../lib/api";
+import { ChevronDown, Phone, Mail } from "lucide-react";
+import { a } from "framer-motion/client";
+
+const faqs = [
+  {
+    q: "How do I book an appointment?",
+    a: "Go to the Appointments page, select a doctor, choose a date and time, describe your symptoms and click Book Appointment. You will receive a confirmation with a reference number."
+  },
+  {
+    q: "Can I cancel or reschedule my appointment?",
+    a: "Yes. Go to your Dashboard, click the Appointments tab, and use the Reschedule or Cancel buttons on any upcoming appointment."
+  },
+  {
+    q: "How do I order medications from the pharmacy?",
+    a: "Go to the Pharmacy page, browse or search for your medication, click View Details, select the quantity and click Add to Cart. Then open your cart and proceed to checkout."
+  },
+  {
+    q: "Is my health data secure?",
+    a: "Yes. All data is encrypted and stored securely. Only you and your authorized care providers can access your records."
+  },
+  {
+    q: "How do I find a doctor by specialty?",
+    a: "Go to the Doctors page and use the specialty filter dropdown to filter doctors by their field of practice."
+  },
+  {
+    q: "What should I do in a medical emergency?",
+    a: "For life-threatening emergencies please call 112 immediately. PrimeHealth is not a substitute for emergency medical services."
+  },
+];
 
 export default function HomePage() {
   const { t } = useLanguage();
   const [tips, setTips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     const fetchTips = async () => {
@@ -16,6 +46,7 @@ export default function HomePage() {
         const data = await tipsAPI.list();
         setTips(Array.isArray(data) ? data.slice(0, 3) : []);
       } catch (err) {
+        console.error("Failed to load tips:", err);
         setTips([]);
       } finally {
         setLoading(false);
@@ -27,8 +58,6 @@ export default function HomePage() {
   return (
     <ProtectedRoute>
       <div className="space-y-16">
-
-      
 
         {/* Hero Section */}
         <section
@@ -139,7 +168,6 @@ export default function HomePage() {
           <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 dark:text-white">
             {t("medicalTips")}
           </h2>
-
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -175,6 +203,82 @@ export default function HomePage() {
               {t("medicalTipsDesc")}
             </p>
           )}
+        </section>
+
+        {/* FAQ Section */}
+        <section className="px-4">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+            Got questions? We have answers.
+          </p>
+          <div className="space-y-3 max-w-3xl">
+            {faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left"
+                >
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white pr-4">
+                    {faq.q}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className="text-gray-400 shrink-0 transition-transform duration-300"
+                    style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                {openFaq === i && (
+                  <div className="px-5 pb-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-slate-700">
+                    <p className="pt-3">{faq.a}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Customer Care Section */}
+        <section className="px-4">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+            Need Help?
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+            Our support team is available 24/7 to assist you.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+            
+              href="tel:+2348000000000"
+              className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group"
+            <a>
+              <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition">
+                <Phone size={20} className="text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Call Us</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">+234 800 000 0000</p>
+                <p className="text-xs text-green-600 mt-0.5">Available 24/7</p>
+              </div>
+            </a>
+
+            
+              href="mailto:support@primehealth.com"
+              className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group"
+            <a>
+              <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition">
+                <Mail size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Email Us</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">support@primehealth.com</p>
+                <p className="text-xs text-blue-600 mt-0.5">Response within 24 hours</p>
+              </div>
+            </a>
+          </div>
         </section>
 
       </div>
