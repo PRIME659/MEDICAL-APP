@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Stethoscope, Pill, Calendar, Shield, Clock, Star, ChevronDown, ArrowRight, Activity, Heart, Users } from "lucide-react";
+import { Stethoscope, Pill, Calendar, Shield, Clock, Star, ChevronDown, ArrowRight, Activity, Heart, Users, CheckCircle, X } from "lucide-react";
 import LanguageToggle from "../components/LanguageToggle";
 
 function Particles() {
@@ -76,6 +76,8 @@ export default function LandingPage() {
   const [statsRef, statsVisible] = useReveal();
   const [testimonialsRef, testimonialsVisible] = useReveal();
   const [faqRef, faqVisible] = useReveal();
+  const [comparisonRef, comparisonVisible] = useReveal();
+  const [doctorsRef, doctorsVisible] = useReveal();
 
   const services = [
     { icon: <Stethoscope size={28} />, title: "Find a Doctor", desc: "Browse verified specialists across all medical fields. Filter by specialty, availability, and location.", color: "#3b82f6", bg: "rgba(59,130,246,0.1)", href: "/auth" },
@@ -109,31 +111,36 @@ export default function LandingPage() {
     { q: "How do I book an appointment?", a: "Simply sign up, search for a doctor by specialty or name, and click Book Appointment. You'll receive an instant confirmation." },
     { q: "Is my health data secure?", a: "Yes. All data is encrypted and stored securely. Only you and your authorized care providers can access your records." },
     { q: "Can I use PrimeHealth on my phone?", a: "Absolutely. PrimeHealth is fully responsive and works seamlessly on all screen sizes including mobile and tablet." },
+    { q: "How do I order medications?", a: "Go to the Pharmacy section, search for your medication, add it to your cart and checkout. Your order will be processed immediately." },
+    { q: "What happens if I need to cancel?", a: "You can cancel or reschedule any upcoming appointment from your dashboard up to 2 hours before the scheduled time." },
+    { q: "Are the doctors verified?", a: "Yes. All doctors on PrimeHealth are verified medical professionals with valid licenses and credentials." },
+  ];
+
+  const featuredDoctors = [
+    { name: "Adebayo Okonkwo", specialty: "Cardiologist", hospital: "LUTH", rating: 4.8, available: true },
+    { name: "Ngozi Chukwu", specialty: "Dermatologist", hospital: "National Hospital", rating: 4.6, available: true },
+    { name: "Ibrahim Musa", specialty: "Neurologist", hospital: "AKTH", rating: 4.9, available: false },
+    { name: "Chiamaka Johnson", specialty: "Pediatrician", hospital: "UNTH", rating: 4.7, available: true },
+  ];
+
+  const comparisonPoints = [
+    { feature: "Book appointment", primehealth: true, traditional: false },
+    { feature: "24/7 availability", primehealth: true, traditional: false },
+    { feature: "Online pharmacy", primehealth: true, traditional: false },
+    { feature: "Digital health records", primehealth: true, traditional: false },
+    { feature: "No waiting rooms", primehealth: true, traditional: false },
+    { feature: "Instant confirmation", primehealth: true, traditional: false },
   ];
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ fontFamily: "'Playpen Sans', cursive" }}>
 
-      {/* Language toggle Top right controls */}
-      <div className="fixed top-6 right-6 z-[9999] flex items-center gap-3">
-        <button
-          onClick={() => {
-            const isDark = document.documentElement.classList.contains("dark");
-            if (isDark) {
-              document.documentElement.classList.remove("dark");
-              localStorage.setItem("darkMode", "false");
-            } else {
-              document.documentElement.classList.add("dark");
-              localStorage.setItem("darkMode", "true");
-            }
-          }}
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/20 transition text-white"
-        >
-          🌙
-        </button>
+      {/* Language Toggle */}
+      <div className="fixed top-6 right-6 z-[9999]">
         <LanguageToggle inline={false} />
       </div>
-      {/* ── HERO ──────────────────────────────────────────── */}
+
+      {/* ── HERO ── */}
       <section
         className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"
         style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0d2818 100%)" }}
@@ -146,13 +153,10 @@ export default function LandingPage() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <GlassCard className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm text-emerald-300 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            Modern Healthcare Platform
+            Nigeria's Modern Healthcare Platform
           </GlassCard>
 
-          <h1
-            className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
-            style={{ textShadow: "0 0 80px rgba(59,130,246,0.3)", color: "#6366f1" }}
-          >
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight" style={{ color: "#6366f1", textShadow: "0 0 80px rgba(59,130,246,0.3)" }}>
             Your Health,{" "}
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Reimagined
@@ -198,7 +202,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── SERVICES ──────────────────────────────────────── */}
+      {/* ── SERVICES ── */}
       <section id="services" ref={servicesRef} className="py-24 px-6" style={{ background: "#f0f4f8" }}>
         <div className="max-w-6xl mx-auto">
           <div className={`text-center mb-16 transition-all duration-700 ${servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
@@ -236,51 +240,149 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ──────────────────────────────────── */}
+      {/* ── FEATURED DOCTORS ── */}
       <section
-        ref={stepsRef}
+        ref={doctorsRef}
         className="py-24 px-6 relative overflow-hidden"
         style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0d2818 100%)" }}
       >
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-20 w-96 h-96 rounded-full blur-3xl" style={{ background: "radial-gradient(circle, #3b82f6, transparent)" }} />
-          <div className="absolute bottom-10 left-20 w-80 h-80 rounded-full blur-3xl" style={{ background: "radial-gradient(circle, #10b981, transparent)" }} />
-        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className={`text-center mb-16 transition-all duration-700 ${doctorsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Our Specialists</span>
+            <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4" style={{ color: "#6366f1" }}>
+              Meet Our Top Doctors
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              All doctors on PrimeHealth are verified medical professionals with valid licenses and credentials.
+            </p>
+          </div>
 
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className={`text-center mb-16 transition-all duration-700 ${stepsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Simple Process</span>
-            <h2
-              className="text-3xl sm:text-4xl font-bold mt-2 mb-4"
-              style={{ color: "#6366f1" }}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {featuredDoctors.map((doc, i) => (
+              <GlassCard
+                key={i}
+                className={`p-5 text-center cursor-pointer hover:scale-105 transition-all duration-500 ${doctorsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+                onClick={() => router.push("/auth")}
+              >
+                <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl font-bold text-white" style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)" }}>
+                  {doc.name.charAt(0)}
+                </div>
+                <p className="text-sm font-bold mb-0.5" style={{ color: "#4dffa6" }}>Dr. {doc.name.split(" ")[0]}</p>
+                <p className="text-xs mb-1" style={{ color: "#00cfff" }}>{doc.specialty}</p>
+                <p className="text-xs text-slate-400 mb-2">{doc.hospital}</p>
+                <div className="flex items-center justify-center gap-1 mb-2">
+                  <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                  <span className="text-xs text-white">{doc.rating}</span>
+                </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${doc.available ? "bg-green-900/30 text-green-400" : "bg-red-900/30 text-red-400"}`}>
+                  {doc.available ? "Available" : "Busy"}
+                </span>
+              </GlassCard>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <button
+              onClick={() => router.push("/auth")}
+              className="group flex items-center gap-2 px-8 py-3 rounded-2xl font-semibold text-white transition-all duration-300 hover:scale-105 mx-auto"
+              style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)" }}
             >
+              View All Doctors
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section ref={stepsRef} className="py-24 px-6" style={{ background: "#f0f4f8" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className={`text-center mb-16 transition-all duration-700 ${stepsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <span className="text-emerald-600 font-semibold text-sm uppercase tracking-widest">Simple Process</span>
+            <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4" style={{ color: "#6366f1" }}>
               How PrimeHealth Works
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Getting the care you need has never been simpler.</p>
+            <p className="text-gray-500 max-w-xl mx-auto">Getting the care you need has never been simpler.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
-              <GlassCard
+              <NeuCard
                 key={i}
                 className={`p-8 text-center transition-all duration-700 ${stepsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
-                <div
-                  className="text-5xl font-bold mb-4 block"
-                  style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-                >
+                <div className="text-5xl font-bold mb-4 block" style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   {step.num}
                 </div>
-                <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{step.desc}</p>
-              </GlassCard>
+                <h3 className="text-lg font-bold text-gray-900 mb-3">{step.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+              </NeuCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── STATS BAR ─────────────────────────────────────── */}
+      {/* ── COMPARISON TABLE ── */}
+      <section
+        ref={comparisonRef}
+        className="py-24 px-6 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #0f172a 0%, #1a2744 100%)" }}
+      >
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className={`text-center mb-16 transition-all duration-700 ${comparisonVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Why Choose Us</span>
+            <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4" style={{ color: "#6366f1" }}>
+              PrimeHealth vs Traditional Healthcare
+            </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">See why thousands of Nigerians are switching to PrimeHealth.</p>
+          </div>
+
+          <div className={`transition-all duration-700 ${comparisonVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div />
+              <div className="text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white" style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)" }}>
+                  PrimeHealth
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-slate-400 border border-white/10">
+                  Traditional
+                </div>
+              </div>
+            </div>
+
+            <GlassCard className="overflow-hidden">
+              {comparisonPoints.map((point, i) => (
+                <div
+                  key={i}
+                  className={`grid grid-cols-3 gap-4 px-6 py-4 ${i !== comparisonPoints.length - 1 ? "border-b border-white/10" : ""}`}
+                >
+                  <p className="text-slate-300 text-sm font-medium">{point.feature}</p>
+                  <div className="flex justify-center">
+                    {point.primehealth ? (
+                      <CheckCircle size={20} className="text-emerald-400" />
+                    ) : (
+                      <X size={20} className="text-red-400" />
+                    )}
+                  </div>
+                  <div className="flex justify-center">
+                    {point.traditional ? (
+                      <CheckCircle size={20} className="text-emerald-400" />
+                    ) : (
+                      <X size={20} className="text-red-400" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BAR ── */}
       <section ref={statsRef} className="py-16 px-6" style={{ background: "#f0f4f8" }}>
         <div className="max-w-5xl mx-auto">
           <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 transition-all duration-700 ${statsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
@@ -297,7 +399,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ──────────────────────────────────── */}
+      {/* ── TESTIMONIALS ── */}
       <section
         ref={testimonialsRef}
         className="py-24 px-6 relative overflow-hidden"
@@ -310,10 +412,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto relative z-10">
           <div className={`text-center mb-16 transition-all duration-700 ${testimonialsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <span className="text-emerald-400 font-semibold text-sm uppercase tracking-widest">Patient Stories</span>
-            <h2
-              className="text-3xl sm:text-4xl font-bold mt-2 mb-4"
-              style={{ color: "#6366f1" }}
-            >
+            <h2 className="text-3xl sm:text-4xl font-bold mt-2 mb-4" style={{ color: "#6366f1" }}>
               What Our Patients Say
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto">Real experiences from real people who trust PrimeHealth.</p>
@@ -347,7 +446,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FAQ TEASER ────────────────────────────────────── */}
+      {/* ── FAQ ── */}
       <section ref={faqRef} className="py-24 px-6" style={{ background: "#f0f4f8" }}>
         <div className="max-w-3xl mx-auto">
           <div className={`text-center mb-12 transition-all duration-700 ${faqVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
@@ -378,16 +477,10 @@ export default function LandingPage() {
               </NeuCard>
             ))}
           </div>
-
-          <div className="text-center mt-8">
-            <button onClick={() => router.push("/auth")} className="text-blue-600 font-semibold text-sm hover:underline">
-              See all FAQs →
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* ── CTA BANNER ────────────────────────────────────── */}
+      {/* ── CTA BANNER ── */}
       <section
         className="py-24 px-6 relative overflow-hidden"
         style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d2818 100%)" }}
@@ -398,10 +491,7 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
-          <h2
-            className="text-3xl sm:text-5xl font-bold mb-6 leading-tight"
-            style={{ color: "#6366f1" }}
-          >
+          <h2 className="text-3xl sm:text-5xl font-bold mb-6 leading-tight" style={{ color: "#6366f1" }}>
             Ready to Take Control of{" "}
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #10b981)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Your Health?
@@ -422,7 +512,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── FOOTER ────────────────────────────────────────── */}
+      {/* ── FOOTER ── */}
       <footer className="py-8 px-6 border-t border-gray-200" style={{ background: "#f0f4f8" }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
           <p className="font-bold text-gray-900">PrimeHealth</p>
@@ -439,9 +529,7 @@ export default function LandingPage() {
           0%, 100% { transform: translateY(0px) scale(1); opacity: 0.2; }
           50% { transform: translateY(-20px) scale(1.1); opacity: 0.35; }
         }
-        .animate-float {
-          animation: float linear infinite;
-        }
+        .animate-float { animation: float linear infinite; }
       `}</style>
 
     </div>
