@@ -3,35 +3,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "../components/ProtectedRoute";
-import { useLanguage } from "../components/LanguageContext";
 import { tipsAPI, doctorsAPI } from "../lib/api";
 import { ChevronDown, Phone, Mail, Stethoscope, Pill, Calendar, Activity, Heart, Users, Clock, ArrowRight } from "lucide-react";
 
 const faqs = [
-  {
-    q: "How do I book an appointment?",
-    a: "Go to the Appointments page, select a doctor, choose a date and time, describe your symptoms and click Book Appointment. You will receive a confirmation with a reference number."
-  },
-  {
-    q: "Can I cancel or reschedule my appointment?",
-    a: "Yes. Go to your Dashboard, click the Appointments tab, and use the Reschedule or Cancel buttons on any upcoming appointment."
-  },
-  {
-    q: "How do I order medications from the pharmacy?",
-    a: "Go to the Pharmacy page, browse or search for your medication, click View Details, select the quantity and click Add to Cart. Then open your cart and proceed to checkout."
-  },
-  {
-    q: "Is my health data secure?",
-    a: "Yes. All data is encrypted and stored securely. Only you and your authorized care providers can access your records."
-  },
-  {
-    q: "How do I find a doctor by specialty?",
-    a: "Go to the Doctors page and use the specialty filter dropdown to filter doctors by their field of practice."
-  },
-  {
-    q: "What should I do in a medical emergency?",
-    a: "For life-threatening emergencies please call 112 immediately. PrimeHealth is not a substitute for emergency medical services."
-  },
+  { q: "How do I book an appointment?", a: "Go to the Appointments page, select a doctor, choose a date and time, describe your symptoms and click Book Appointment. You will receive a confirmation with a reference number." },
+  { q: "Can I cancel or reschedule my appointment?", a: "Yes. Go to your Dashboard, click the Appointments tab, and use the Reschedule or Cancel buttons on any upcoming appointment." },
+  { q: "How do I order medications from the pharmacy?", a: "Go to the Pharmacy page, browse or search for your medication, click View Details, select the quantity and click Add to Cart. Then open your cart and proceed to checkout." },
+  { q: "Is my health data secure?", a: "Yes. All data is encrypted and stored securely. Only you and your authorized care providers can access your records." },
+  { q: "How do I find a doctor by specialty?", a: "Go to the Doctors page and use the specialty filter dropdown to filter doctors by their field of practice." },
+  { q: "What should I do in a medical emergency?", a: "For life-threatening emergencies please call 112 immediately. PrimeHealth is not a substitute for emergency medical services." },
 ];
 
 const stats = [
@@ -49,7 +30,6 @@ const quickActions = [
 ];
 
 export default function HomePage() {
-  const { t } = useLanguage();
   const router = useRouter();
   const [tips, setTips] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -89,17 +69,17 @@ export default function HomePage() {
           }}
         >
           <h1 className="text-2xl sm:text-4xl font-bold mb-4 text-black">
-            {t("welcome")}
+            Welcome to PrimeHealth
           </h1>
           <p className="text-black/70 mb-8 max-w-2xl mx-auto text-sm sm:text-base">
-            {t("tagline")}
+            Find doctors, book appointments, and access pharmacy drugs easily.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <a href="/doctors" className="bg-blue-600 text-white py-2.5 px-8 rounded-xl hover:bg-blue-700 transition font-semibold text-sm sm:text-base">
-              {t("findDoctor")}
+              Find a Doctor
             </a>
             <a href="/pharmacy" className="bg-green-600 text-white py-2.5 px-8 rounded-xl hover:bg-green-700 transition font-semibold text-sm sm:text-base">
-              {t("browsePharmacy")}
+              Browse Pharmacy
             </a>
           </div>
         </section>
@@ -108,10 +88,7 @@ export default function HomePage() {
         <section className="px-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {stats.map((stat, i) => (
-              <div
-                key={i}
-                className="bg-white dark:bg-[#1e293b] rounded-2xl border border-gray-100 dark:border-slate-700 p-5 text-center shadow-sm hover:shadow-md transition"
-              >
+              <div key={i} className="bg-white dark:bg-[#1e293b] rounded-2xl border border-gray-100 dark:border-slate-700 p-5 text-center shadow-sm hover:shadow-md transition">
                 <div className="flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600">
                   {stat.icon}
                 </div>
@@ -137,10 +114,7 @@ export default function HomePage() {
                 onClick={() => router.push(action.href)}
                 className="flex flex-col items-center gap-3 p-5 bg-white dark:bg-[#1e293b] rounded-2xl border border-gray-100 dark:border-slate-700 hover:shadow-lg transition text-center group"
               >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition"
-                  style={{ background: action.bg, color: action.color }}
-                >
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition" style={{ background: action.bg, color: action.color }}>
                   {action.icon}
                 </div>
                 <div>
@@ -159,12 +133,8 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              General Consultation
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-              Connect with experienced doctors for accurate diagnosis and personalized care.
-            </p>
+            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">General Consultation</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Connect with experienced doctors for accurate diagnosis and personalized care.</p>
             <button onClick={() => router.push("/doctors")} className="mt-4 flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">
               Find a Doctor <ArrowRight size={16} />
             </button>
@@ -173,12 +143,8 @@ export default function HomePage() {
 
         <section className="grid md:grid-cols-2 gap-8 items-center px-4">
           <div className="order-2 md:order-1">
-            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
-              Eye Care & Vision Testing
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-              Advanced eye testing and vision care with modern equipment.
-            </p>
+            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">Eye Care & Vision Testing</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Advanced eye testing and vision care with modern equipment.</p>
             <button onClick={() => router.push("/appointments")} className="mt-4 flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">
               Book Now <ArrowRight size={16} />
             </button>
@@ -195,12 +161,8 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
-              Therapy & Mental Wellness
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-              Professional therapy sessions in a safe and supportive environment.
-            </p>
+            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">Therapy & Mental Wellness</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Professional therapy sessions in a safe and supportive environment.</p>
             <button onClick={() => router.push("/appointments")} className="mt-4 flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">
               Book Session <ArrowRight size={16} />
             </button>
@@ -209,12 +171,8 @@ export default function HomePage() {
 
         <section className="grid md:grid-cols-2 gap-8 items-center px-4">
           <div className="order-2 md:order-1">
-            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-blue-500 to-green-600 bg-clip-text text-transparent">
-              Laboratory Testing
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-              Fast and accurate lab tests including blood and sugar diagnostics.
-            </p>
+            <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-blue-500 to-green-600 bg-clip-text text-transparent">Laboratory Testing</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Fast and accurate lab tests including blood and sugar diagnostics.</p>
             <button onClick={() => router.push("/appointments")} className="mt-4 flex items-center gap-2 text-blue-600 font-semibold text-sm hover:underline">
               Book Test <ArrowRight size={16} />
             </button>
@@ -229,21 +187,13 @@ export default function HomePage() {
         <section className="px-4">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-                Featured Doctors
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                Top verified specialists on PrimeHealth
-              </p>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Featured Doctors</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Top verified specialists on PrimeHealth</p>
             </div>
-            <button
-              onClick={() => router.push("/doctors")}
-              className="flex items-center gap-1 text-blue-600 font-semibold text-sm hover:underline"
-            >
+            <button onClick={() => router.push("/doctors")} className="flex items-center gap-1 text-blue-600 font-semibold text-sm hover:underline">
               View all <ArrowRight size={16} />
             </button>
           </div>
-
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -257,20 +207,12 @@ export default function HomePage() {
           ) : doctors.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {doctors.map((doctor) => (
-                <div
-                  key={doctor.id}
-                  onClick={() => router.push("/doctors")}
-                  className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm hover:shadow-md transition cursor-pointer"
-                >
+                <div key={doctor.id} onClick={() => router.push("/doctors")} className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 p-4 shadow-sm hover:shadow-md transition cursor-pointer">
                   <div className="w-full h-24 bg-blue-50 dark:bg-[#0f172a] rounded-lg flex items-center justify-center mb-3">
                     <Stethoscope size={32} className="text-blue-300" />
                   </div>
-                  <p className="text-sm font-semibold mb-0.5" style={{ color: "#4dffa6" }}>
-                    Dr. {doctor.name}
-                  </p>
-                  <p className="text-xs font-medium mb-2" style={{ color: "#00cfff" }}>
-                    {doctor.specialty}
-                  </p>
+                  <p className="text-sm font-semibold mb-0.5" style={{ color: "#4dffa6" }}>Dr. {doctor.name}</p>
+                  <p className="text-xs font-medium mb-2" style={{ color: "#00cfff" }}>{doctor.specialty}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-yellow-500">⭐ {doctor.rating}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${doctor.is_available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
@@ -285,9 +227,7 @@ export default function HomePage() {
 
         {/* Medical Tips */}
         <section className="px-4">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-            {t("medicalTips")}
-          </h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 dark:text-white">Medical Tips</h2>
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -303,9 +243,7 @@ export default function HomePage() {
               {tips.map((tip) => (
                 <div key={tip.id} className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition">
                   <div className="text-3xl mb-3">{tip.icon}</div>
-                  <h3 className="font-semibold text-base mb-1" style={{ color: "#4dffa6", textShadow: "0 0 10px rgba(77,255,166,0.3)" }}>
-                    {tip.title}
-                  </h3>
+                  <h3 className="font-semibold text-base mb-1" style={{ color: "#4dffa6", textShadow: "0 0 10px rgba(77,255,166,0.3)" }}>{tip.title}</h3>
                   <p className="text-sm font-medium mb-2 capitalize" style={{ color: "#00cfff" }}>
                     {typeof tip.category === "string" ? tip.category.replace("_", " ") : ""}
                   </p>
@@ -316,20 +254,14 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-              {t("medicalTipsDesc")}
-            </p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Daily health tips to keep you healthy.</p>
           )}
         </section>
 
         {/* How It Works */}
         <section className="px-4">
-          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-            How PrimeHealth Works
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-            Getting the care you need has never been simpler
-          </p>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">How PrimeHealth Works</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Getting the care you need has never been simpler</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { num: "01", title: "Create Account", desc: "Sign up in under a minute. No paperwork, no queues.", icon: "👤" },
@@ -350,27 +282,14 @@ export default function HomePage() {
 
         {/* FAQ Section */}
         <section className="px-4">
-          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-            Got questions? We have answers.
-          </p>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Frequently Asked Questions</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Got questions? We have answers.</p>
           <div className="space-y-3 max-w-3xl">
             {faqs.map((faq, i) => (
               <div key={i} className="bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left"
-                >
-                  <span className="text-sm font-semibold text-gray-900 dark:text-white pr-4">
-                    {faq.q}
-                  </span>
-                  <ChevronDown
-                    size={18}
-                    className="text-gray-400 shrink-0 transition-transform duration-300"
-                    style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0deg)" }}
-                  />
+                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between px-5 py-4 text-left">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white pr-4">{faq.q}</span>
+                  <ChevronDown size={18} className="text-gray-400 shrink-0 transition-transform duration-300" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0deg)" }} />
                 </button>
                 {openFaq === i && (
                   <div className="px-5 pb-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-slate-700">
@@ -382,19 +301,12 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Customer Care Section */}
+        {/* Customer Care */}
         <section className="px-4">
-          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-            Need Help?
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-            Our support team is available 24/7 to assist you.
-          </p>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Need Help?</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Our support team is available 24/7 to assist you.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-            
-              href="tel:+2348000000000"
-              className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group"
-            <a>
+            <a href="tel:+2348000000000" className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group">
               <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition">
                 <Phone size={20} className="text-green-600" />
               </div>
@@ -404,11 +316,7 @@ export default function HomePage() {
                 <p className="text-xs text-green-600 mt-0.5">Available 24/7</p>
               </div>
             </a>
-
-            
-              href="mailto:support@primehealth.com"
-              className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group"
-            <a>
+            <a href="mailto:support@primehealth.com" className="flex items-center gap-4 p-5 bg-white dark:bg-[#1e293b] rounded-xl border border-gray-100 dark:border-slate-700 hover:shadow-md transition group">
               <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition">
                 <Mail size={20} className="text-blue-600" />
               </div>

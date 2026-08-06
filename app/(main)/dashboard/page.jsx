@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "../../components/ProtectedRoute";
-import LanguageToggle from "../../components/LanguageToggle";
 import { User, Calendar, Settings, Stethoscope, Pill, LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { authAPI, appointmentsAPI } from "../../lib/api";
@@ -19,6 +18,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [tempProfile, setTempProfile] = useState({});
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,10 +83,10 @@ export default function DashboardPage() {
   };
 
   const tabs = [
-    { id: "profile", label: "Profile", icon: <User size={16} /> },
-    { id: "appointments", label: "Appointments", icon: <Calendar size={16} /> },
-    { id: "quicklinks", label: "Quick Links", icon: <Stethoscope size={16} /> },
-    { id: "settings", label: "Settings", icon: <Settings size={16} /> },
+    { id: "profile", label: t("profile"), icon: <User size={16} /> },
+    { id: "appointments", label: t("appointments"), icon: <Calendar size={16} /> },
+    { id: "quicklinks", label: t("quickLinks"), icon: <Stethoscope size={16} /> },
+    { id: "settings", label: t("settings"), icon: <Settings size={16} /> },
   ];
 
   if (loading || !profile) {
@@ -107,10 +107,10 @@ export default function DashboardPage() {
 
         <section>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
-            My Dashboard
+            {t("myDashboard")}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Manage your profile, appointments and settings.
+            {t("manageProfile, appointments, and settings")}
           </p>
         </section>
 
@@ -212,15 +212,15 @@ export default function DashboardPage() {
               {editing ? (
                 <>
                   <button onClick={handleSave} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-semibold transition">
-                    Save Changes
+                    {t("save Changes")}
                   </button>
                   <button onClick={() => setEditing(false)} className="flex-1 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-400 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition">
-                    Cancel
+                    {t("cancel")}
                   </button>
                 </>
               ) : (
                 <button onClick={() => setEditing(true)} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-semibold transition">
-                  Edit Profile
+                  {t("editProfile")}
                 </button>
               )}
             </div>
@@ -230,7 +230,7 @@ export default function DashboardPage() {
         {/* Appointments Tab */}
         {activeTab === "appointments" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Appointment History</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>{t("Appointment History")}</h2>
 
             {appointments.length > 0 ? (
               <div className="space-y-3">
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                 onClick={() => router.push("/appointments")}
                 className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
               >
-                Book New Appointment
+                {t("Book New Appointment")}
               </button>
             )}
           </div>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
         {/* Quick Links Tab */}
         {activeTab === "quicklinks" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
-            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Quick Links</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>{t("Quick Links")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: "Find a Doctor", desc: "Browse and filter doctors by specialty", icon: <Stethoscope size={20} className="text-blue-600" />, href: "/doctors" },
@@ -320,20 +320,21 @@ export default function DashboardPage() {
         {/* Settings Tab */}
         {activeTab === "settings" && (
           <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 space-y-4">
-            <h2 className="text-lg font-bold mb-4" style={neonStyle}>Account Settings</h2>
+            <h2 className="text-lg font-bold mb-4" style={neonStyle}>{t("Settings")}</h2>
 
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">Language</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{t("language")}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t("Choose Language")}</p>
               </div>
               <LanguageToggle inline={true} />
             </div>
 
             {[
-              { label: "Email Notifications", desc: "Receive appointment reminders via email" },
-              { label: "SMS Notifications", desc: "Receive updates via text message" },
-              { label: "Two Factor Authentication", desc: "Add an extra layer of security" },
+              // Settings labels
+              { label: t("emailNotifications"), desc: "Receive appointment reminders via email" },
+              { label: t("smsNotifications"), desc: "Receive updates via text message" },
+              { label: t("twoFactor"), desc: "Add an extra layer of security" },
             ].map((setting) => (
               <div key={setting.label} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f172a] rounded-xl border border-gray-100 dark:border-slate-700">
                 <div>
@@ -352,7 +353,7 @@ export default function DashboardPage() {
               className="w-full flex items-center justify-center gap-2 mt-4 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl text-sm font-semibold transition"
             >
               <LogOut size={16} />
-              Log Out
+              {t("Logout")}
             </button>
           </div>
         )}
