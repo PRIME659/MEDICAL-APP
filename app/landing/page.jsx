@@ -197,6 +197,105 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ───────── PRIMEHEALTH CINEMATIC SHOWCASE ───────── */}
+      <section
+        className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, #f0f4f8 0%, #ffffff 100%)",
+        }}
+      >
+        <div className="max-w-6xl mx-auto">
+
+          {/* Heading */}
+          <div className="text-center mb-12">
+            <span className="text-emerald-600 font-semibold uppercase tracking-[0.25em] text-sm">
+              Experience PrimeHealth
+            </span>
+
+            <h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 mb-5"
+              style={{
+                background:
+                  "linear-gradient(135deg,#2563eb,#10b981)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Healthcare, Without the Wait
+            </h2>
+
+            <p className="max-w-2xl mx-auto text-gray-500 leading-relaxed text-base md:text-lg">
+              See how PrimeHealth connects patients with verified doctors,
+              pharmacies and digital healthcare in just a few seconds.
+            </p>
+          </div>
+
+          {/* Video */}
+          <div
+            className="relative overflow-hidden rounded-2xl md:rounded-[32px]"
+            style={{
+              background: "rgba(255,255,255,.08)",
+              backdropFilter: "blur(20px)",
+            }}
+          >
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full aspect-video object-cover scale-[1.02] animate-videoZoom"
+            >
+              <source
+                src="/videos/primehealth-promo.mp4"
+                type="video/mp4"
+              />
+            </video>
+
+            {/* Gradient */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(15,23,42,.75), rgba(15,23,42,.15), transparent)",
+              }}
+            />
+          </div>
+
+          {/* Bottom Features */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h4 className="font-bold text-lg mb-2">
+                Verified Doctors
+              </h4>
+              <p className="text-gray-500 text-sm">
+                Connect instantly with trusted medical professionals across Nigeria.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h4 className="font-bold text-lg mb-2">
+                Digital Healthcare
+              </h4>
+              <p className="text-gray-500 text-sm">
+                Appointments, pharmacy and medical records in one secure platform.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <h4 className="font-bold text-lg mb-2">
+                Available Anytime
+              </h4>
+              <p className="text-gray-500 text-sm">
+                Access healthcare whenever you need it from wherever you are.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── SERVICES ── */}
       <section id="services" ref={servicesRef} className="py-24 px-6" style={{ background: "#f0f4f8" }}>
         <div className="max-w-6xl mx-auto">

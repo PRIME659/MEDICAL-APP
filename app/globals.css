@@ -253,3 +253,18 @@ body {
 .animate-dropdown {
   animation: dropdown 0.2s ease-out forwards;
 }
+
+
+@keyframes videoZoom {
+  0% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-videoZoom {
+  animation: videoZoom 10s ease-in-out infinite alternate;
+}
+
